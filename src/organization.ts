@@ -5,7 +5,7 @@ export class Organization extends postRequest{
 
     private organizationName: string;
     readonly baseQuery:string;
-    readonly baseResponseKey:string = "organization";
+    readonly baseResponseKey:string[] = ["organization"];
 
     constructor(organizationName:string){
         super();
@@ -19,20 +19,20 @@ export class Organization extends postRequest{
 
     getOrganizationName(){
         super.addResponseKey(this.baseResponseKey);
-        super.addResponseKey("login");
+        super.addResponseKey(["login"]);
         super.startPost(this.baseQuery.replace("insertHere", "login"),super.processResponse);
 
     }
 
     getOrganizationAvatarURL(){
         super.addResponseKey(this.baseResponseKey);
-        super.addResponseKey("avatarUrl");
+        super.addResponseKey(["avatarUrl"]);
         super.startPost(this.baseQuery.replace("insertHere", "avatarUrl"),super.processResponse);
     }
 
     getOrganizationDescription(){
         super.addResponseKey(this.baseResponseKey);
-        super.addResponseKey("description");
+        super.addResponseKey(["description"]);
         super.startPost(this.baseQuery.replace("insertHere", "description"),super.processResponse);
     }
 

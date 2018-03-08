@@ -5,7 +5,7 @@ export class Members extends postRequest{
     private memberAmount: number;
     private generatedQuery:string;
     readonly baseQuery:string;
-    readonly baseResponseKey:string = "members";
+    readonly baseResponseKey:string[] = ["members"];
 
     constructor(memberAmount:number){
         super();
@@ -22,8 +22,13 @@ export class Members extends postRequest{
 
     getMembersNames(){
         super.addResponseKey(this.baseResponseKey);
-        super.addResponseKey("nodes");
-        super.addResponseKey("login");
+        super.addResponseKey(["nodes", "login"]);
         super.startPost(this.generatedQuery.replace("insertHere", "login"),super.processResponse);
+    }
+
+    getMembersAvaterURL(){
+        super.addResponseKey(this.baseResponseKey);
+        super.addResponseKey(["nodes", "avatarUrl"]);
+        super.startPost(this.generatedQuery.replace("insertHere", "avatarUrl"),super.processResponse);
     }
 }

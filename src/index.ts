@@ -5,7 +5,7 @@ class Crawl {
 
     constructor(){
         var organ = new Organization("adessoAG");
-        organ.getOrganizationDescription();
+        organ.getOrganizationMembers();
     }
 }
 

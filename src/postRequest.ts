@@ -1,16 +1,15 @@
 import axios from 'axios';
+import config from './config'
 
 export abstract class postRequest{
-    readonly URL:string = "https://api.github.com/graphql";
-    readonly AUTH_TOKEN:string = "f89557ab7f9177fd278451e1e4b2a52b445eb8f0";
     static RESPONSE_KEYS:string[] = [];
 
     constructor(){
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.AUTH_TOKEN;
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + config.AUTH_TOKEN;
     }
 
     startPost(queryContent:string,callback:any){
-        axios.post(this.URL, {
+        axios.post(config.URL_PATH, {
             query: queryContent
           })
           .then(function (response) {
@@ -34,8 +33,8 @@ export abstract class postRequest{
         } else console.log(response);
     }
 
-    addResponseKey(key:string){
-        postRequest.RESPONSE_KEYS.push(key);
+    addResponseKey(keyArray:string[]){
+        postRequest.RESPONSE_KEYS = postRequest.RESPONSE_KEYS.concat(keyArray);
     }
 }
 

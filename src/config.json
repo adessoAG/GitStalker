@@ -1,0 +1,4 @@
+{
+    "URL_PATH": "https://api.github.com/graphql",
+    "AUTH_TOKEN": "InsertToken"
+}
