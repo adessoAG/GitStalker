@@ -21,14 +21,12 @@ export class Members extends postRequest{
     }
 
     getMembersNames(){
-        super.addResponseKey(this.baseResponseKey);
-        super.addResponseKey(["nodes", "login"]);
+        super.addResponseKey(this.baseResponseKey.concat(["nodes", "login"]));
         super.startPost(this.generatedQuery.replace("insertHere", "login"),super.processResponse);
     }
 
-    getMembersAvaterURL(){
-        super.addResponseKey(this.baseResponseKey);
-        super.addResponseKey(["nodes", "avatarUrl"]);
+    getMembersAvatarURL(){
+        super.addResponseKey(this.baseResponseKey.concat(["nodes", "avatarUrl"]));
         super.startPost(this.generatedQuery.replace("insertHere", "avatarUrl"),super.processResponse);
     }
 }
