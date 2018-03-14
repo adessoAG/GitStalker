@@ -22,7 +22,7 @@ export abstract class postRequest{
           });
     }
 
-    async processResponse(response:any,responseKeys:string[]){
+    async processResponse(response:any,responseKeys:string[]):Promise<string[]>{
         responseKeys.every(function(keys) {
             response = response[keys];
             return !isArray(response);
@@ -39,6 +39,6 @@ export abstract class postRequest{
     }
 }
 
-function isArray(jsonData:JSON) {
+function isArray(jsonData:JSON):boolean {
     return Object.prototype.toString.call(jsonData) === '[object Array]';
 }
