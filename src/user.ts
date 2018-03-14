@@ -1,60 +1,96 @@
 import { postRequest } from "./postRequest";
 
-export class User extends postRequest{
+export enum CrawlUser {
+    LOGIN,
+    AVATAR_URL,
+    COMPANY,
+    HIREABLE,
+    EMAIL,
+    CONTRIBUTED_REPOSITORIES,
+    CONTRIBUTED_REPOSITORIES_TOTALCOUNT,
+}
 
-    readonly baseQuery:string;
-    readonly baseResponseKey:string[] = ["user"];
-    readonly baseVariable:string;
+export class User extends postRequest {
 
-    constructor(userLogin:String){
+    readonly baseQuery: string;
+    readonly baseResponseKey: string[] = ["user"];
+    readonly baseVariable: string;
+
+    constructor(userLogin: String) {
         super();
         this.baseQuery = `query ($userLogin: String!){
             user(login: $userLogin){
                 insertHere
             }
             }`;
-        this.baseVariable = '{"userLogin":"'+ userLogin + '"}'
+        this.baseVariable = '{"userLogin":"' + userLogin + '"}'
     }
 
-    async getUserName(){
-        let keyValue: string = "login";
-        let responseKeyValues: string[] = ["login"]
+    async doPostCalls(crawlInformation: CrawlUser) {
+        let keyValue: string;
+        let responseKeyValues: string[];
+
+        switch (crawlInformation) {
+            case CrawlUser.LOGIN:
+                keyValue = "login";
+                responseKeyValues = ["login"];
+                break;
+            case CrawlUser.AVATAR_URL:
+                keyValue = "avatarUrl";
+                responseKeyValues = ["avatarUrl"];
+                break;
+            case CrawlUser.COMPANY:
+                keyValue = "company";
+                responseKeyValues = ["company"];
+                break;
+            case CrawlUser.HIREABLE:
+                keyValue = "isHireable";
+                responseKeyValues = ["isHireable"];
+                break;
+            case CrawlUser.EMAIL:
+                keyValue = "email";
+                responseKeyValues = ["email"];
+                break;
+            case CrawlUser.CONTRIBUTED_REPOSITORIES:
+                keyValue = "contributedRepositories(first: 10){nodes{name}}";
+                responseKeyValues = ["contributedRepositories", "nodes", "name"];
+                break;
+            case CrawlUser.CONTRIBUTED_REPOSITORIES_TOTALCOUNT:
+                keyValue = "contributedRepositories(first: 10){totalCount}";
+                responseKeyValues = ["contributedRepositories", "totalCount"];
+                break;
+            default:
+                return Promise.reject(new Error('No suitable information found for user!'));
+        }
+
         return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
     }
 
-    async getUserAvatarUrl(){
-        let keyValue: string = "avatarUrl";
-        let responseKeyValues: string[] = ["avatarUrl"]
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+    async getUserName() {
+        return await this.doPostCalls(CrawlUser.LOGIN);
     }
 
-    async getUserCompany(){
-        let keyValue: string = "company";
-        let responseKeyValues: string[] = ["company"]
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+    async getUserAvatarUrl() {
+        return await this.doPostCalls(CrawlUser.AVATAR_URL);
     }
 
-    async isHireable(){
-        let keyValue: string = "isHireable";
-        let responseKeyValues: string[] = ["isHireable"]
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+    async getUserCompany() {
+        return await this.doPostCalls(CrawlUser.COMPANY);
     }
 
-    async getUserEmail(){
-        let keyValue: string = "email";
-        let responseKeyValues: string[] = ["email"]
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+    async isHireable() {
+        return await this.doPostCalls(CrawlUser.HIREABLE);
     }
 
-    async getUserContributedRepositories(){
-        let keyValue: string = "contributedRepositories(first: 10){nodes{name}}";
-        let responseKeyValues: string[] = ["contributedRepositories","nodes","name"]
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+    async getUserEmail() {
+        return await this.doPostCalls(CrawlUser.EMAIL);
     }
 
-    async getUserContributedRepositoriesTotalCount(){
-        let keyValue: string = "contributedRepositories(first: 10){totalCount}";
-        let responseKeyValues: string[] = ["contributedRepositories","totalCount"]
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+    async getUserContributedRepositories() {
+        return await this.doPostCalls(CrawlUser.CONTRIBUTED_REPOSITORIES);
+    }
+
+    async getUserContributedRepositoriesTotalCount() {
+        return await this.doPostCalls(CrawlUser.CONTRIBUTED_REPOSITORIES_TOTALCOUNT);
     }
 }
