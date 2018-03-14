@@ -2,39 +2,40 @@ import axios from 'axios';
 import config from './config'
 
 export abstract class postRequest{
-    static RESPONSE_KEYS:string[] = [];
 
     constructor(){
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + config.AUTH_TOKEN;
     }
 
-    startPost(queryContent:string,callback:any){
-        axios.post(config.URL_PATH, {
-            query: queryContent
+    async startPost(queryContent:string,queryVariable:string,responseKeys:string[],callback:any):Promise<string[]>{
+
+        return axios.post(config.URL_PATH, {
+            query: queryContent,
+            variables: queryVariable
           })
-          .then(function (response) {
-            callback(response.data.data);
+          .then(async function (response) {
+             return await callback(response.data.data,responseKeys);
+            
           })
           .catch(function (error) {
             console.log(error);
           });
     }
 
-    processResponse(response:any){
-        postRequest.RESPONSE_KEYS.every(function(keys) {
+    async processResponse(response:any,responseKeys:string[]){
+        responseKeys.every(function(keys) {
             response = response[keys];
             return !isArray(response);
         });
 
+        let responseData:string[] = [];
         if(isArray(response)){
-        response.forEach(element => {
-            console.log(element[postRequest.RESPONSE_KEYS[postRequest.RESPONSE_KEYS.length-1]])
-        })
-        } else console.log(response);
-    }
+            response.forEach(element => {
+                responseData = responseData.concat(element[responseKeys[responseKeys.length-1]]);
+            })
+        } else responseData.push(response);
 
-    addResponseKey(keyArray:string[]){
-        postRequest.RESPONSE_KEYS = postRequest.RESPONSE_KEYS.concat(keyArray);
+        return responseData;
     }
 }
 
