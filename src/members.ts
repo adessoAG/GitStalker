@@ -3,49 +3,53 @@ import { objOrganization } from './interfaceOrganization';
 
 export class Members extends postRequest{
 
+    readonly membersBaseQuery:string;
     readonly baseQuery:string;
-    readonly generatedBaseQuery:string;
-    readonly baseResponseKey:string[] = ["members"];
-    readonly generatedBaseResponseKeys:string[];
-    readonly generatedVariables:string;
+    readonly membersBaseResponseKey:string[] = ["members"];
+    readonly baseResponseKey:string[];
+    readonly membersBaseVariable:string;
+    readonly baseVariable:string;
 
     constructor(quantity:number,organization:objOrganization){
         super();
-        this.baseQuery = `members(first: ` + quantity + `) {
+        this.membersBaseQuery = `members(first: ` + quantity + `) {
                 insertHere
           }`;
-        this.generatedBaseQuery = this.generateBaseQuery(organization.baseQuery);
-        this.generatedBaseResponseKeys = this.generateBaseResponseKeys(organization.responseKeys);
-        this.generatedVariables = organization.baseVariable;
+        this.membersBaseVariable = '';
+        this.baseQuery = this.generateBaseQuery(organization.baseQuery);
+        this.baseResponseKey = this.generateBaseResponseKeys(organization.responseKeys);
+        this.baseVariable = organization.baseVariable;
     }
 
 
+    generateBaseVariable(previousBaseVariable:string):string {
+        return previousBaseVariable.concat(this.membersBaseVariable);
+    }
+
     generateBaseResponseKeys(previousBaseResponseKey:string[]):string[] {
-        return previousBaseResponseKey.concat(this.baseResponseKey);
+        return previousBaseResponseKey.concat(this.membersBaseResponseKey);
     }
 
     generateBaseQuery(previousBaseQuery:string):string{
-        return previousBaseQuery.replace("insertHere",this.baseQuery);
+        return previousBaseQuery.replace("insertHere",this.membersBaseQuery);
     }
-
-    //TODO Change generated variables to fit the standard call of startPost
 
     async getMembersTotalCount(){
         let keyValue: string = "totalCount";
         let responseKeyValues: string[] = ["totalCount"];
-        return await super.startPost(this.generatedBaseQuery.replace("insertHere", keyValue), this.generatedVariables, this.generatedBaseResponseKeys.concat(responseKeyValues), super.processResponse);
+        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
     }
 
     async getMembersNames(){
         let keyValue: string = "nodes{login}";
         let responseKeyValues: string[] = ["nodes", "login"];
-        return await super.startPost(this.generatedBaseQuery.replace("insertHere", keyValue), this.generatedVariables, this.generatedBaseResponseKeys.concat(responseKeyValues), super.processResponse);
+        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
     }
 
 
     async getMembersAvatarURL(){
         let keyValue: string = "nodes{avatarUrl}";
         let responseKeyValues: string[] = ["nodes", "avatarUrl"];
-        return await super.startPost(this.generatedBaseQuery.replace("insertHere", keyValue), this.generatedVariables, this.generatedBaseResponseKeys.concat(responseKeyValues), super.processResponse);
+        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
     }
 }
