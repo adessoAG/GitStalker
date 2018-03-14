@@ -8,7 +8,7 @@ export abstract class postRequest{
     }
 
     async startPost(queryContent:string,queryVariable:string,responseKeys:string[],callback:any):Promise<string[]>{
-
+        
         return axios.post(config.URL_PATH, {
             query: queryContent,
             variables: queryVariable

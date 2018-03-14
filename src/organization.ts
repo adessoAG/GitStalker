@@ -2,6 +2,7 @@ import { postRequest } from './postRequest';
 import { Members } from './members';
 import { objOrganization } from './interfaceOrganization';
 import { INSPECT_MAX_BYTES } from 'buffer';
+import { Teams } from './teams';
 
 export enum CrawlOrganization {
     LOGIN,
@@ -104,5 +105,9 @@ export class Organization extends postRequest {
 
     getOrganizationMembers(amount: number): Members {
         return new Members(amount, this.generateOrganizationObject());
+    }
+
+    getOrganizationTeams(amount: number) {
+        return new Teams(amount,this.generateOrganizationObject());
     }
 }

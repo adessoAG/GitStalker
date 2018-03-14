@@ -4,15 +4,22 @@ import { INSPECT_MAX_BYTES } from 'buffer';
 
 class Crawl {
 
-    constructor(){
-        let test:Organization = new Organization("adessoAG");
-        let user:User = new User("FrederikSchlemmer");
+    constructor() {
+        let test: Organization = new Organization("adessoAG");
+        let user: User = new User("FrederikSchlemmer");
         // test.getOrganizationLocation().then(function(results){
         //     console.log(results)
         // })
-        test.getOrganizationMembers(INSPECT_MAX_BYTES).getMembers().then(function(results){
-            results.forEach(user => {
-                user.getUserName().then(function(results){
+        // test.getOrganizationMembers(INSPECT_MAX_BYTES).getMembers().then(function(results){
+        //     results.forEach(user => {
+        //         user.getUserName().then(function(results){
+        //             console.log(results)
+        //         });
+        //     });
+        // });
+        test.getOrganizationTeams(INSPECT_MAX_BYTES).getTeams().then(function (results) {
+            results.forEach(team => {
+                team.getTeamName().then(function(results){
                     console.log(results)
                 });
             });
