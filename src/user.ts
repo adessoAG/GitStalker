@@ -26,7 +26,7 @@ export class User extends postRequest {
         this.baseVariable = '{"userLogin":"' + userLogin + '"}'
     }
 
-    async doPostCalls(crawlInformation: CrawlUser) {
+    private async doPostCalls(crawlInformation: CrawlUser) {
         let keyValue: string;
         let responseKeyValues: string[];
 

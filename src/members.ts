@@ -1,16 +1,22 @@
 import { postRequest } from './postRequest';
 import { objOrganization } from './interfaceOrganization';
+import { User } from './user';
 
-export class Members extends postRequest{
+export enum CrawlMembers {
+    TOTALCOUNT,
+    MEMBERS
+}
 
-    readonly membersBaseQuery:string;
-    readonly baseQuery:string;
-    readonly membersBaseResponseKey:string[] = ["members"];
-    readonly baseResponseKey:string[];
-    readonly membersBaseVariable:string;
-    readonly baseVariable:string;
+export class Members extends postRequest {
 
-    constructor(quantity:number,organization:objOrganization){
+    readonly membersBaseQuery: string;
+    readonly baseQuery: string;
+    readonly membersBaseResponseKey: string[] = ["members"];
+    readonly baseResponseKey: string[];
+    readonly membersBaseVariable: string;
+    readonly baseVariable: string;
+
+    constructor(quantity: number, organization: objOrganization) {
         super();
         this.membersBaseQuery = `members(first: ` + quantity + `) {
                 insertHere
@@ -22,34 +28,49 @@ export class Members extends postRequest{
     }
 
 
-    generateBaseVariable(previousBaseVariable:string):string {
+    private generateBaseVariable(previousBaseVariable: string): string {
         return previousBaseVariable.concat(this.membersBaseVariable);
     }
 
-    generateBaseResponseKeys(previousBaseResponseKey:string[]):string[] {
+    private generateBaseResponseKeys(previousBaseResponseKey: string[]): string[] {
         return previousBaseResponseKey.concat(this.membersBaseResponseKey);
     }
 
-    generateBaseQuery(previousBaseQuery:string):string{
-        return previousBaseQuery.replace("insertHere",this.membersBaseQuery);
+    private generateBaseQuery(previousBaseQuery: string): string {
+        return previousBaseQuery.replace("insertHere", this.membersBaseQuery);
     }
 
-    async getMembersTotalCount(){
-        let keyValue: string = "totalCount";
-        let responseKeyValues: string[] = ["totalCount"];
+    private async doPostCalls(crawlInformation: CrawlMembers) {
+        let keyValue: string;
+        let responseKeyValues: string[];
+
+        switch (crawlInformation) {
+            case CrawlMembers.TOTALCOUNT:
+                keyValue = "totalCount";
+                responseKeyValues = ["totalCount"];
+                break;
+            case CrawlMembers.MEMBERS:
+                keyValue = "nodes{login}";
+                responseKeyValues = ["nodes", "login"];
+                break;
+            default:
+                return Promise.reject(new Error('No suitable information found for user!'));
+        }
+
         return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
     }
 
-    async getMembersNames(){
-        let keyValue: string = "nodes{login}";
-        let responseKeyValues: string[] = ["nodes", "login"];
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+    async getMembersTotalCount() {
+        return await this.doPostCalls(CrawlMembers.TOTALCOUNT);
     }
 
-
-    async getMembersAvatarURL(){
-        let keyValue: string = "nodes{avatarUrl}";
-        let responseKeyValues: string[] = ["nodes", "avatarUrl"];
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+    async getMembers():Promise<User[]> {
+        let membersLogin:string[] = await this.doPostCalls(CrawlMembers.MEMBERS);
+        let membersUser:User[] = [];
+        membersLogin.forEach(memberLogin => {
+            membersUser.push(new User(memberLogin));
+        });
+        return membersUser;
     }
+
 }

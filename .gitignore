@@ -2,3 +2,5 @@ node_modules/
 GitHub Token\.txt
 
 src/config.json
+
+src/team\.ts
