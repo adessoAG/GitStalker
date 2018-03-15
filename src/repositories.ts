@@ -1,6 +1,6 @@
 import { postRequest } from "./postRequest";
-import { objOrganization } from "./interfaceOrganization";
 import { Repository } from "./repository";
+import { previousRequestData } from "./interfaceRequestData";
 
 export enum CrawlRepositories {
     TOTALCOUNT,
@@ -16,16 +16,16 @@ export class Repositories extends postRequest {
     readonly repositoriesBaseVariable: string;
     readonly baseVariable: string;
 
-    constructor(quantity: number, organization: objOrganization) {
+    constructor(quantity: number, previousData: previousRequestData) {
         super();
         this.repositoriesBaseQuery = `repositories(first: ` + quantity + `) {
             insertHere
           }`;
         this.repositoriesBaseVariable = '';
         this.repositoriesBaseResponseKey = ["repositories"];
-        this.baseQuery = this.generateBaseQuery(organization.baseQuery);
-        this.baseVariable = this.generateBaseVariable(organization.baseVariable);
-        this.baseResponseKey = this.generateBaseResponseKeys(organization.responseKeys);
+        this.baseQuery = this.generateBaseQuery(previousData.baseQuery);
+        this.baseVariable = this.generateBaseVariable(previousData.baseVariable);
+        this.baseResponseKey = this.generateBaseResponseKeys(previousData.responseKeys);
 
     }
 
@@ -65,14 +65,14 @@ export class Repositories extends postRequest {
         return await this.doPostCalls(CrawlRepositories.TOTALCOUNT);
     }
 
-    async getRepositories():Promise<Repository[]> {
-        let repositoriesNameWithOwner:string[] = await this.doPostCalls(CrawlRepositories.REPOSITORIES);
-        let repositories:Repository[] = [];
+    async getRepositories(): Promise<Repository[]> {
+        let repositoriesNameWithOwner: string[] = await this.doPostCalls(CrawlRepositories.REPOSITORIES);
+        let repositories: Repository[] = [];
 
         repositoriesNameWithOwner.forEach(repoNameAndOwner => {
-            let splittedOwnerAndName:string[];
-            splittedOwnerAndName = repoNameAndOwner.split("/",2);
-             repositories.push(new Repository(splittedOwnerAndName[0],splittedOwnerAndName[1]));
+            let splittedOwnerAndName: string[];
+            splittedOwnerAndName = repoNameAndOwner.split("/", 2);
+            repositories.push(new Repository(splittedOwnerAndName[0], splittedOwnerAndName[1]));
         });
         return repositories;
     }

@@ -1,5 +1,5 @@
 import { postRequest } from "./postRequest";
-import { objOrganization } from "./interfaceOrganization";
+import { previousRequestData } from "./interfaceRequestData";
 
 export enum CrawlTeam {
     NAME,
@@ -15,16 +15,16 @@ export class Team extends postRequest{
     readonly teamBaseVariable: string;
     readonly baseVariable: string;
 
-    constructor(slug: string, organization: objOrganization) {
+    constructor(slug: string, previousData: previousRequestData) {
         super();
         this.teamBaseQuery = `team(slug: "`+ slug +`") {
             insertHere
           }`;
         this.teamBaseVariable = '';
         this.teamBaseResponseKey = ["team"];
-        this.baseQuery = this.generateBaseQuery(organization.baseQuery);
-        this.baseVariable = this.generateBaseVariable(organization.baseVariable);
-        this.baseResponseKey = this.generateBaseResponseKeys(organization.responseKeys);
+        this.baseQuery = this.generateBaseQuery(previousData.baseQuery);
+        this.baseVariable = this.generateBaseVariable(previousData.baseVariable);
+        this.baseResponseKey = this.generateBaseResponseKeys(previousData.responseKeys);
     }
 
     private generateBaseVariable(previousBaseVariable: string): string {
