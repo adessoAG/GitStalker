@@ -7,6 +7,13 @@ class Crawl {
     constructor() {
         let test: Organization = new Organization("adessoAG");
         let user: User = new User("FrederikSchlemmer");
+        test.getOrganizationRepositories(INSPECT_MAX_BYTES).getRepositories().then(function(results){
+            results.forEach(repository => {
+                repository.getRepositoryDescription().then(function(results){
+                    console.log(results)
+                });
+            });
+        });
         // test.getOrganizationLocation().then(function(results){
         //     console.log(results)
         // })
@@ -17,16 +24,15 @@ class Crawl {
         //         });
         //     });
         // });
-        test.getOrganizationTeams(INSPECT_MAX_BYTES).getTeams().then(function (results) {
-            results.forEach(team => {
-                team.getTeamName().then(function(results){
-                    console.log(results)
-                });
-            });
-        });
-        // test.getOrganizationMembers(INSPECT_MAX_BYTES).getMembersNames().then(function(results){
-        //     console.log(results)
-        //     let asd:User = new User(results[1]);
+        // test.getOrganizationTeams(INSPECT_MAX_BYTES).getTeams().then(function (results) {
+        //     results.forEach(team => {
+        //         team.getTeamName().then(function(results){
+        //             console.log(results)
+        //         });
+        //     });
+        // });
+        // test.getOrganizationMembers(INSPECT_MAX_BYTES).getMembers().then(function(results){
+        //     let asd:User = results[0];
         //     asd.getUserContributedRepositories().then(function(results){
         //         console.log(results)
         //     });

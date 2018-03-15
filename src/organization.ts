@@ -3,6 +3,7 @@ import { Members } from './members';
 import { objOrganization } from './interfaceOrganization';
 import { INSPECT_MAX_BYTES } from 'buffer';
 import { Teams } from './teams';
+import { Repositories } from './repositories';
 
 export enum CrawlOrganization {
     LOGIN,
@@ -19,7 +20,7 @@ export enum CrawlOrganization {
 export class Organization extends postRequest {
 
     readonly baseQuery: string;
-    readonly baseResponseKey: string[] = ["organization"];
+    readonly baseResponseKey: string[];
     readonly baseVariable: string;
 
 
@@ -31,6 +32,7 @@ export class Organization extends postRequest {
             }
           }
           `;
+        this.baseResponseKey = ["organization"];
         this.baseVariable = '{"organizationName": "' + organizationName + '"}';
     }
 
@@ -107,7 +109,11 @@ export class Organization extends postRequest {
         return new Members(amount, this.generateOrganizationObject());
     }
 
-    getOrganizationTeams(amount: number) {
+    getOrganizationTeams(amount: number): Teams {
         return new Teams(amount,this.generateOrganizationObject());
+    }
+
+    getOrganizationRepositories(amount: number): Repositories {
+        return new Repositories(amount,this.generateOrganizationObject());
     }
 }

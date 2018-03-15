@@ -13,7 +13,7 @@ export enum CrawlUser {
 export class User extends postRequest {
 
     readonly baseQuery: string;
-    readonly baseResponseKey: string[] = ["user"];
+    readonly baseResponseKey: string[];
     readonly baseVariable: string;
 
     constructor(userLogin: String) {
@@ -23,6 +23,7 @@ export class User extends postRequest {
                 insertHere
             }
             }`;
+        this.baseResponseKey = ["user"];
         this.baseVariable = '{"userLogin":"' + userLogin + '"}'
     }
 

@@ -10,7 +10,7 @@ export class Team extends postRequest{
 
     readonly baseQuery: string;
     readonly teamBaseQuery: string;
-    readonly teamBaseResponseKey: string[] = ["team"];
+    readonly teamBaseResponseKey: string[];
     readonly baseResponseKey: string[];
     readonly teamBaseVariable: string;
     readonly baseVariable: string;

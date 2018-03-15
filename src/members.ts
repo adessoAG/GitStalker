@@ -11,7 +11,7 @@ export class Members extends postRequest {
 
     readonly membersBaseQuery: string;
     readonly baseQuery: string;
-    readonly membersBaseResponseKey: string[] = ["members"];
+    readonly membersBaseResponseKey: string[];
     readonly baseResponseKey: string[];
     readonly membersBaseVariable: string;
     readonly baseVariable: string;
@@ -22,6 +22,7 @@ export class Members extends postRequest {
                 insertHere
           }`;
         this.membersBaseVariable = '';
+        this.membersBaseResponseKey = ["members"]; 
         this.baseQuery = this.generateBaseQuery(organization.baseQuery);
         this.baseResponseKey = this.generateBaseResponseKeys(organization.responseKeys);
         this.baseVariable = organization.baseVariable;
