@@ -1,6 +1,6 @@
 import { postRequest } from './postRequest';
-import { objOrganization } from './interfaceOrganization';
 import { User } from './user';
+import { previousRequestData } from './interfaceRequestData';
 
 export enum CrawlMembers {
     TOTALCOUNT,
@@ -16,16 +16,16 @@ export class Members extends postRequest {
     readonly membersBaseVariable: string;
     readonly baseVariable: string;
 
-    constructor(quantity: number, organization: objOrganization) {
+    constructor(quantity: number, previousData: previousRequestData) {
         super();
         this.membersBaseQuery = `members(first: ` + quantity + `) {
                 insertHere
           }`;
         this.membersBaseVariable = '';
         this.membersBaseResponseKey = ["members"]; 
-        this.baseQuery = this.generateBaseQuery(organization.baseQuery);
-        this.baseResponseKey = this.generateBaseResponseKeys(organization.responseKeys);
-        this.baseVariable = organization.baseVariable;
+        this.baseQuery = this.generateBaseQuery(previousData.baseQuery);
+        this.baseResponseKey = this.generateBaseResponseKeys(previousData.responseKeys);
+        this.baseVariable = previousData.baseVariable;
     }
 
 

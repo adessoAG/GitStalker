@@ -1,9 +1,9 @@
 import { postRequest } from './postRequest';
 import { Members } from './members';
-import { objOrganization } from './interfaceOrganization';
 import { INSPECT_MAX_BYTES } from 'buffer';
 import { Teams } from './teams';
 import { Repositories } from './repositories';
+import { previousRequestData } from './interfaceRequestData';
 
 export enum CrawlOrganization {
     LOGIN,
@@ -72,13 +72,13 @@ export class Organization extends postRequest {
         return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
     }
 
-    private generateOrganizationObject(): objOrganization {
-        let objOrganization: objOrganization = {
+    private generateRequestDataObject(): previousRequestData {
+        let previousRequest: previousRequestData = {
             baseQuery: this.baseQuery,
             baseVariable: this.baseVariable,
             responseKeys: this.baseResponseKey,
         }
-        return objOrganization;
+        return previousRequest;
     }
 
     async getOrganizationLogin() {
@@ -106,14 +106,14 @@ export class Organization extends postRequest {
     }
 
     getOrganizationMembers(amount: number): Members {
-        return new Members(amount, this.generateOrganizationObject());
+        return new Members(amount, this.generateRequestDataObject());
     }
 
     getOrganizationTeams(amount: number): Teams {
-        return new Teams(amount,this.generateOrganizationObject());
+        return new Teams(amount,this.generateRequestDataObject());
     }
 
     getOrganizationRepositories(amount: number): Repositories {
-        return new Repositories(amount,this.generateOrganizationObject());
+        return new Repositories(amount,this.generateRequestDataObject());
     }
 }
