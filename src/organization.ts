@@ -72,15 +72,6 @@ export class Organization extends postRequest {
         return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
     }
 
-    private generateRequestDataObject(): previousRequestData {
-        let previousRequest: previousRequestData = {
-            baseQuery: this.baseQuery,
-            baseVariable: this.baseVariable,
-            responseKeys: this.baseResponseKey,
-        }
-        return previousRequest;
-    }
-
     async getOrganizationLogin() {
         return await this.doPostCalls(CrawlOrganization.LOGIN);
     }
@@ -106,14 +97,14 @@ export class Organization extends postRequest {
     }
 
     getOrganizationMembers(amount: number): Members {
-        return new Members(amount, this.generateRequestDataObject());
+        return new Members(amount, super.generateRequestDataObject(this.baseQuery,this.baseVariable,this.baseResponseKey));
     }
 
     getOrganizationTeams(amount: number): Teams {
-        return new Teams(amount,this.generateRequestDataObject());
+        return new Teams(amount, super.generateRequestDataObject(this.baseQuery,this.baseVariable,this.baseResponseKey));
     }
 
     getOrganizationRepositories(amount: number): Repositories {
-        return new Repositories(amount,this.generateRequestDataObject());
+        return new Repositories(amount, super.generateRequestDataObject(this.baseQuery,this.baseVariable,this.baseResponseKey));
     }
 }

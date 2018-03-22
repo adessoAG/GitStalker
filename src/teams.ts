@@ -25,23 +25,11 @@ export class Teams extends postRequest {
             }`;
         this.teamsBaseVariable = '';
         this.teamsBaseResponseKey = ["teams"];
-        this.baseQuery = this.generateBaseQuery(previousData.baseQuery);
-        this.baseVariable = this.generateBaseVariable(previousData.baseVariable);
-        this.baseResponseKey = this.generateBaseResponseKeys(previousData.responseKeys);
+        this.baseQuery = super.generateBaseQuery(previousData.baseQuery,this.teamsBaseQuery);
+        this.baseVariable = super.generateBaseVariable(previousData.baseVariable,this.teamsBaseVariable);
+        this.baseResponseKey = super.generateBaseResponseKeys(previousData.responseKeys,this.teamsBaseResponseKey);
 
         this.previousRequest = previousData;
-    }
-
-    private generateBaseVariable(previousBaseVariable: string): string {
-        return previousBaseVariable.concat(this.teamsBaseVariable);
-    }
-
-    private generateBaseResponseKeys(previousBaseResponseKey: string[]): string[] {
-        return previousBaseResponseKey.concat(this.teamsBaseResponseKey);
-    }
-
-    private generateBaseQuery(previousBaseQuery: string): string {
-        return previousBaseQuery.replace("insertHere", this.teamsBaseQuery);
     }
 
     private async doPostCalls(crawlInformation: CrawlTeams) {

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from './config'
+import { previousRequestData } from './interfaceRequestData';
 
 export abstract class postRequest{
 
@@ -8,7 +9,6 @@ export abstract class postRequest{
     }
 
     async startPost(queryContent:string,queryVariable:string,responseKeys:string[],callback:any):Promise<string[]>{
-        
         return axios.post(config.URL_PATH, {
             query: queryContent,
             variables: queryVariable
@@ -36,6 +36,28 @@ export abstract class postRequest{
         } else responseData.push(response);
 
         return responseData;
+    }
+
+    generateRequestDataObject(baseQuery: string,baseVariable: string,baseResponseKey: string[]): previousRequestData {
+        let previousRequest: previousRequestData = {
+            baseQuery: baseQuery,
+            baseVariable: baseVariable,
+            responseKeys: baseResponseKey,
+        }
+
+        return previousRequest;
+    }
+
+    generateBaseVariable(previousBaseVariable: string, baseVariable: string): string {
+        return previousBaseVariable.concat(baseVariable);
+    }
+
+    generateBaseResponseKeys(previousBaseResponseKey: string[], baseResponseKey: string[]): string[] {
+        return previousBaseResponseKey.concat(baseResponseKey);
+    }
+
+    generateBaseQuery(previousBaseQuery: string, baseQuery: string): string {
+        return previousBaseQuery.replace("insertHere", baseQuery);
     }
 }
 

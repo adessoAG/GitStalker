@@ -23,22 +23,10 @@ export class Repositories extends postRequest {
           }`;
         this.repositoriesBaseVariable = '';
         this.repositoriesBaseResponseKey = ["repositories"];
-        this.baseQuery = this.generateBaseQuery(previousData.baseQuery);
-        this.baseVariable = this.generateBaseVariable(previousData.baseVariable);
-        this.baseResponseKey = this.generateBaseResponseKeys(previousData.responseKeys);
+        this.baseQuery = super.generateBaseQuery(previousData.baseQuery,this.repositoriesBaseQuery);
+        this.baseVariable = super.generateBaseVariable(previousData.baseVariable,this.repositoriesBaseVariable);
+        this.baseResponseKey = super.generateBaseResponseKeys(previousData.responseKeys,this.repositoriesBaseResponseKey);
 
-    }
-
-    private generateBaseVariable(previousBaseVariable: string): string {
-        return previousBaseVariable.concat(this.repositoriesBaseVariable);
-    }
-
-    private generateBaseResponseKeys(previousBaseResponseKey: string[]): string[] {
-        return previousBaseResponseKey.concat(this.repositoriesBaseResponseKey);
-    }
-
-    private generateBaseQuery(previousBaseQuery: string): string {
-        return previousBaseQuery.replace("insertHere", this.repositoriesBaseQuery);
     }
 
     private async doPostCalls(crawlInformation: CrawlRepositories) {

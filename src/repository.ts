@@ -1,7 +1,9 @@
 import { postRequest } from "./postRequest";
+import { Issue } from "./issue";
+import { Issues } from "./issues";
 
 export enum CrawlRepository {
-    DESCRIPTION
+    DESCRIPTION,
 }
 
 export class Repository extends postRequest {
@@ -39,5 +41,9 @@ export class Repository extends postRequest {
 
     async getRepositoryDescription() {
         return await this.doPostCalls(CrawlRepository.DESCRIPTION);
+    }
+
+    getRepositoryIssues(amount: number): Issues {
+        return new Issues(amount, super.generateRequestDataObject(this.baseQuery,this.baseVariable,this.baseResponseKey));
     }
 }
