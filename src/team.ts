@@ -2,8 +2,8 @@ import { postRequest } from "./postRequest";
 import { previousRequestData } from "./interfaceRequestData";
 
 export enum CrawlTeam {
-    NAME,
-    AVATAR_URL
+    NAME = "name",
+    AVATAR_URL = "avatarUrl"
 }
 
 export class Team extends postRequest{
@@ -22,21 +22,9 @@ export class Team extends postRequest{
           }`;
         this.teamBaseVariable = '';
         this.teamBaseResponseKey = ["team"];
-        this.baseQuery = this.generateBaseQuery(previousData.baseQuery);
-        this.baseVariable = this.generateBaseVariable(previousData.baseVariable);
-        this.baseResponseKey = this.generateBaseResponseKeys(previousData.responseKeys);
-    }
-
-    private generateBaseVariable(previousBaseVariable: string): string {
-        return previousBaseVariable.concat(this.teamBaseVariable);
-    }
-
-    private generateBaseResponseKeys(previousBaseResponseKey: string[]): string[] {
-        return previousBaseResponseKey.concat(this.teamBaseResponseKey);
-    }
-
-    private generateBaseQuery(previousBaseQuery: string): string {
-        return previousBaseQuery.replace("insertHere", this.teamBaseQuery);
+        this.baseQuery = super.generateBaseQuery(previousData.baseQuery,this.teamBaseQuery);
+        this.baseVariable = super.generateBaseVariable(previousData.baseVariable,this.teamBaseVariable);
+        this.baseResponseKey = super.generateBaseResponseKeys(previousData.responseKeys,this.teamBaseResponseKey);
     }
 
     private async doPostCalls(crawlInformation: CrawlTeam) {
@@ -45,12 +33,12 @@ export class Team extends postRequest{
 
         switch (crawlInformation) {
             case CrawlTeam.NAME:
-                keyValue = "name";
-                responseKeyValues = ["name"];
+                keyValue = CrawlTeam.NAME.valueOf();
+                responseKeyValues = [CrawlTeam.NAME.valueOf()];
                 break;
             case CrawlTeam.AVATAR_URL:
-                keyValue = "avatarUrl";
-                responseKeyValues = ["avatarUrl"];
+                keyValue = CrawlTeam.AVATAR_URL.valueOf();
+                responseKeyValues = [CrawlTeam.AVATAR_URL.valueOf()];
                 break;
             default:
                 return Promise.reject(new Error('No suitable information found for user!'));
