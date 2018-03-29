@@ -23,22 +23,9 @@ export class Members extends postRequest {
           }`;
         this.membersBaseVariable = '';
         this.membersBaseResponseKey = ["members"]; 
-        this.baseQuery = this.generateBaseQuery(previousData.baseQuery);
-        this.baseResponseKey = this.generateBaseResponseKeys(previousData.responseKeys);
+        this.baseQuery = super.generateBaseQuery(previousData.baseQuery,this.membersBaseQuery);
+        this.baseResponseKey = super.generateBaseResponseKeys(previousData.responseKeys,this.membersBaseResponseKey);
         this.baseVariable = previousData.baseVariable;
-    }
-
-
-    private generateBaseVariable(previousBaseVariable: string): string {
-        return previousBaseVariable.concat(this.membersBaseVariable);
-    }
-
-    private generateBaseResponseKeys(previousBaseResponseKey: string[]): string[] {
-        return previousBaseResponseKey.concat(this.membersBaseResponseKey);
-    }
-
-    private generateBaseQuery(previousBaseQuery: string): string {
-        return previousBaseQuery.replace("insertHere", this.membersBaseQuery);
     }
 
     private async doPostCalls(crawlInformation: CrawlMembers) {

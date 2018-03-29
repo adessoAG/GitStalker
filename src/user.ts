@@ -1,13 +1,13 @@
 import { postRequest } from "./postRequest";
 
 export enum CrawlUser {
-    LOGIN,
-    AVATAR_URL,
-    COMPANY,
-    HIREABLE,
-    EMAIL,
-    CONTRIBUTED_REPOSITORIES,
-    CONTRIBUTED_REPOSITORIES_TOTALCOUNT,
+    LOGIN = "login",
+    AVATAR_URL = "avatarUrl",
+    COMPANY = "company",
+    HIREABLE = "isHireable",
+    EMAIL = "email",
+    CONTRIBUTED_REPOSITORIES = "contributed_Repos",
+    CONTRIBUTED_REPOSITORIES_TOTALCOUNT  = "contributed_Repos_Count",
 }
 
 export class User extends postRequest {
@@ -33,24 +33,24 @@ export class User extends postRequest {
 
         switch (crawlInformation) {
             case CrawlUser.LOGIN:
-                keyValue = "login";
-                responseKeyValues = ["login"];
+                keyValue = CrawlUser.LOGIN.valueOf();
+                responseKeyValues = [CrawlUser.LOGIN.valueOf()];
                 break;
             case CrawlUser.AVATAR_URL:
-                keyValue = "avatarUrl";
-                responseKeyValues = ["avatarUrl"];
+                keyValue = CrawlUser.AVATAR_URL.valueOf();
+                responseKeyValues = [CrawlUser.AVATAR_URL.valueOf()];
                 break;
             case CrawlUser.COMPANY:
-                keyValue = "company";
-                responseKeyValues = ["company"];
+                keyValue = CrawlUser.COMPANY.valueOf();
+                responseKeyValues = [CrawlUser.COMPANY.valueOf()];
                 break;
             case CrawlUser.HIREABLE:
-                keyValue = "isHireable";
-                responseKeyValues = ["isHireable"];
+                keyValue = CrawlUser.HIREABLE.valueOf();
+                responseKeyValues = [CrawlUser.HIREABLE.valueOf()];
                 break;
             case CrawlUser.EMAIL:
-                keyValue = "email";
-                responseKeyValues = ["email"];
+                keyValue = CrawlUser.EMAIL.valueOf();
+                responseKeyValues = [CrawlUser.EMAIL.valueOf()];
                 break;
             case CrawlUser.CONTRIBUTED_REPOSITORIES:
                 keyValue = "contributedRepositories(first: 10){nodes{name}}";
