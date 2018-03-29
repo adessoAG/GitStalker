@@ -13,18 +13,14 @@ export class Repositories extends postRequest {
     readonly repositoriesBaseQuery: string;
     readonly repositoriesBaseResponseKey: string[] = ["repositories"];
     readonly baseResponseKey: string[];
-    readonly repositoriesBaseVariable: string;
-    readonly baseVariable: string;
 
     constructor(quantity: number, previousData: previousRequestData) {
         super();
         this.repositoriesBaseQuery = `repositories(first: ` + quantity + `) {
             insertHere
           }`;
-        this.repositoriesBaseVariable = '';
         this.repositoriesBaseResponseKey = ["repositories"];
         this.baseQuery = super.generateBaseQuery(previousData.baseQuery,this.repositoriesBaseQuery);
-        this.baseVariable = super.generateBaseVariable(previousData.baseVariable,this.repositoriesBaseVariable);
         this.baseResponseKey = super.generateBaseResponseKeys(previousData.responseKeys,this.repositoriesBaseResponseKey);
 
     }
@@ -46,7 +42,7 @@ export class Repositories extends postRequest {
                 return Promise.reject(new Error('No suitable information found for user!'));
         }
 
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseResponseKey.concat(responseKeyValues), super.processResponse);
     }
 
     async getRepositoriesTotalCount() {

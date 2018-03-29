@@ -8,10 +8,9 @@ export abstract class postRequest{
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + config.AUTH_TOKEN;
     }
 
-    async startPost(queryContent:string,queryVariable:string,responseKeys:string[],callback:any):Promise<string[]>{
+    async startPost(queryContent:string,responseKeys:string[],callback:any):Promise<string[]>{
         return axios.post(config.URL_PATH, {
             query: queryContent,
-            variables: queryVariable
           })
           .then(async function (response) {
              return await callback(response.data.data,responseKeys);
@@ -38,18 +37,13 @@ export abstract class postRequest{
         return responseData;
     }
 
-    generateRequestDataObject(baseQuery: string,baseVariable: string,baseResponseKey: string[]): previousRequestData {
+    generateRequestDataObject(baseQuery: string,baseResponseKey: string[]): previousRequestData {
         let previousRequest: previousRequestData = {
             baseQuery: baseQuery,
-            baseVariable: baseVariable,
             responseKeys: baseResponseKey,
         }
 
         return previousRequest;
-    }
-
-    generateBaseVariable(previousBaseVariable: string, baseVariable: string): string {
-        return previousBaseVariable.concat(baseVariable);
     }
 
     generateBaseResponseKeys(previousBaseResponseKey: string[], baseResponseKey: string[]): string[] {

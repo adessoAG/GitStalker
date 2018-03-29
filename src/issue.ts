@@ -11,18 +11,14 @@ export class Issue extends postRequest{
     readonly issueBaseQuery: string;
     readonly issueBaseResponseKey: string[];
     readonly baseResponseKey: string[];
-    readonly issueBaseVariable: string;
-    readonly baseVariable: string;
 
     constructor(number: number, previousData: previousRequestData) {
         super();
         this.issueBaseQuery = `issue(number: `+ number +`) {
             insertHere
           }`;
-        this.issueBaseVariable = '';
         this.issueBaseResponseKey = ["issue"];
         this.baseQuery = super.generateBaseQuery(previousData.baseQuery,this.issueBaseQuery);
-        this.baseVariable = super.generateBaseVariable(previousData.baseVariable,this.issueBaseVariable);
         this.baseResponseKey = super.generateBaseResponseKeys(previousData.responseKeys,this.issueBaseResponseKey);
     }
 
@@ -39,7 +35,7 @@ export class Issue extends postRequest{
                 return Promise.reject(new Error('No suitable information found for user!'));
         }
 
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseResponseKey.concat(responseKeyValues), super.processResponse);
     }
 
     async getIssueTitle() {

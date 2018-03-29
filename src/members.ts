@@ -13,19 +13,15 @@ export class Members extends postRequest {
     readonly baseQuery: string;
     readonly membersBaseResponseKey: string[];
     readonly baseResponseKey: string[];
-    readonly membersBaseVariable: string;
-    readonly baseVariable: string;
 
     constructor(quantity: number, previousData: previousRequestData) {
         super();
         this.membersBaseQuery = `members(first: ` + quantity + `) {
                 insertHere
           }`;
-        this.membersBaseVariable = '';
         this.membersBaseResponseKey = ["members"]; 
         this.baseQuery = super.generateBaseQuery(previousData.baseQuery,this.membersBaseQuery);
         this.baseResponseKey = super.generateBaseResponseKeys(previousData.responseKeys,this.membersBaseResponseKey);
-        this.baseVariable = previousData.baseVariable;
     }
 
     private async doPostCalls(crawlInformation: CrawlMembers) {
@@ -45,7 +41,7 @@ export class Members extends postRequest {
                 return Promise.reject(new Error('No suitable information found for user!'));
         }
 
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseResponseKey.concat(responseKeyValues), super.processResponse);
     }
 
     async getMembersTotalCount() {

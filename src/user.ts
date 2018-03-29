@@ -14,17 +14,15 @@ export class User extends postRequest {
 
     readonly baseQuery: string;
     readonly baseResponseKey: string[];
-    readonly baseVariable: string;
 
     constructor(userLogin: String) {
         super();
-        this.baseQuery = `query ($userLogin: String!){
-            user(login: $userLogin){
+        this.baseQuery = `query {
+            user(login: "`+ userLogin + `"){
                 insertHere
             }
             }`;
         this.baseResponseKey = ["user"];
-        this.baseVariable = '{"userLogin":"' + userLogin + '"}'
     }
 
     private async doPostCalls(crawlInformation: CrawlUser) {
@@ -64,7 +62,7 @@ export class User extends postRequest {
                 return Promise.reject(new Error('No suitable information found for user!'));
         }
 
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseResponseKey.concat(responseKeyValues), super.processResponse);
     }
 
     async getUserName() {

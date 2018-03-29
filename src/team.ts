@@ -12,18 +12,14 @@ export class Team extends postRequest{
     readonly teamBaseQuery: string;
     readonly teamBaseResponseKey: string[];
     readonly baseResponseKey: string[];
-    readonly teamBaseVariable: string;
-    readonly baseVariable: string;
 
     constructor(slug: string, previousData: previousRequestData) {
         super();
         this.teamBaseQuery = `team(slug: "`+ slug +`") {
             insertHere
           }`;
-        this.teamBaseVariable = '';
         this.teamBaseResponseKey = ["team"];
         this.baseQuery = super.generateBaseQuery(previousData.baseQuery,this.teamBaseQuery);
-        this.baseVariable = super.generateBaseVariable(previousData.baseVariable,this.teamBaseVariable);
         this.baseResponseKey = super.generateBaseResponseKeys(previousData.responseKeys,this.teamBaseResponseKey);
     }
 
@@ -44,7 +40,7 @@ export class Team extends postRequest{
                 return Promise.reject(new Error('No suitable information found for user!'));
         }
 
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseResponseKey.concat(responseKeyValues), super.processResponse);
     }
 
     async getTeamName() {

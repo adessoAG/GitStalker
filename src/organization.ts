@@ -21,19 +21,17 @@ export class Organization extends postRequest {
 
     readonly baseQuery: string;
     readonly baseResponseKey: string[];
-    readonly baseVariable: string;
 
 
     constructor(organizationName: string) {
         super();
-        this.baseQuery = `query ($organizationName: String!) {
-            organization(login: $organizationName) {
+        this.baseQuery = `query {
+            organization(login: "`+ organizationName + `") {
               insertHere
             }
           }
           `;
         this.baseResponseKey = ["organization"];
-        this.baseVariable = '{"organizationName": "' + organizationName + '"}';
     }
 
     private async doPostCalls(crawlInformation: CrawlOrganization) {
@@ -69,7 +67,7 @@ export class Organization extends postRequest {
                 return Promise.reject(new Error('No suitable information found for user!'));
         }
 
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseResponseKey.concat(responseKeyValues), super.processResponse);
     }
 
     async getOrganizationLogin() {
@@ -97,14 +95,14 @@ export class Organization extends postRequest {
     }
 
     getOrganizationMembers(amount: number): Members {
-        return new Members(amount, super.generateRequestDataObject(this.baseQuery, this.baseVariable, this.baseResponseKey));
+        return new Members(amount, super.generateRequestDataObject(this.baseQuery, this.baseResponseKey));
     }
 
     getOrganizationTeams(amount: number): Teams {
-        return new Teams(amount, super.generateRequestDataObject(this.baseQuery, this.baseVariable, this.baseResponseKey));
+        return new Teams(amount, super.generateRequestDataObject(this.baseQuery, this.baseResponseKey));
     }
 
     getOrganizationRepositories(amount: number): Repositories {
-        return new Repositories(amount, super.generateRequestDataObject(this.baseQuery, this.baseVariable, this.baseResponseKey));
+        return new Repositories(amount, super.generateRequestDataObject(this.baseQuery, this.baseResponseKey));
     }
 }

@@ -10,7 +10,6 @@ export class Repository extends postRequest {
 
     readonly baseQuery: string;
     readonly baseResponseKey: string[];
-    readonly baseVariable: string;
 
     constructor(owner: string, name: string) {
         super();
@@ -20,7 +19,6 @@ export class Repository extends postRequest {
             }
           }`;
         this.baseResponseKey = ["repository"];
-        this.baseVariable = '';
     }
 
     private async doPostCalls(crawlInformation: CrawlRepository) {
@@ -36,7 +34,7 @@ export class Repository extends postRequest {
                 return Promise.reject(new Error('No suitable information found for user!'));
         }
 
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseVariable, this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseResponseKey.concat(responseKeyValues), super.processResponse);
     }
 
     async getRepositoryDescription() {
@@ -44,6 +42,6 @@ export class Repository extends postRequest {
     }
 
     getRepositoryIssues(amount: number): Issues {
-        return new Issues(amount, super.generateRequestDataObject(this.baseQuery,this.baseVariable,this.baseResponseKey));
+        return new Issues(amount, super.generateRequestDataObject(this.baseQuery,this.baseResponseKey));
     }
 }
