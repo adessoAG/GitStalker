@@ -6,14 +6,14 @@ import { Repositories } from './repositories';
 import { previousRequestData } from './interfaceRequestData';
 
 export enum CrawlOrganization {
-    LOGIN,
-    AVATAR_URL,
-    DESCRIPTION,
-    MEMBERS,
-    DATABASE_ID,
-    ID,
-    LOCATION,
-    NAME,
+    LOGIN = "login",
+    AVATAR_URL = "avatarUrl",
+    DESCRIPTION = "description",
+    MEMBERS = "members",
+    DATABASE_ID = "avatarUrl",
+    ID = "id",
+    LOCATION = "location",
+    NAME = "name",
 
 }
 
@@ -42,28 +42,28 @@ export class Organization extends postRequest {
 
         switch (crawlInformation) {
             case CrawlOrganization.LOGIN:
-                keyValue = "login";
-                responseKeyValues = ["login"];
+                keyValue = CrawlOrganization.LOGIN.valueOf();
+                responseKeyValues = [CrawlOrganization.LOGIN.valueOf()];
                 break;
             case CrawlOrganization.AVATAR_URL:
-                keyValue = "avatarUrl";
-                responseKeyValues = ["avatarUrl"];
+                keyValue = CrawlOrganization.AVATAR_URL.valueOf();
+                responseKeyValues = [CrawlOrganization.AVATAR_URL.valueOf()];
                 break;
             case CrawlOrganization.DESCRIPTION:
-                keyValue = "description";
-                responseKeyValues = ["description"];
+                keyValue = CrawlOrganization.DESCRIPTION.valueOf();
+                responseKeyValues = [CrawlOrganization.DESCRIPTION.valueOf()];
                 break;
             case CrawlOrganization.ID:
-                keyValue = "id";
-                responseKeyValues = ["id"];
+                keyValue = CrawlOrganization.ID.valueOf();
+                responseKeyValues = [CrawlOrganization.ID.valueOf()];
                 break;
-                case CrawlOrganization.LOCATION:
-                keyValue = "location";
-                responseKeyValues = ["location"];
+            case CrawlOrganization.LOCATION:
+                keyValue = CrawlOrganization.LOCATION.valueOf();
+                responseKeyValues = [CrawlOrganization.LOCATION.valueOf()];
                 break;
-                case CrawlOrganization.NAME:
-                keyValue = "name";
-                responseKeyValues = ["name"];
+            case CrawlOrganization.NAME:
+                keyValue = CrawlOrganization.NAME.valueOf();
+                responseKeyValues = [CrawlOrganization.NAME.valueOf()];
                 break;
             default:
                 return Promise.reject(new Error('No suitable information found for user!'));
@@ -97,14 +97,14 @@ export class Organization extends postRequest {
     }
 
     getOrganizationMembers(amount: number): Members {
-        return new Members(amount, super.generateRequestDataObject(this.baseQuery,this.baseVariable,this.baseResponseKey));
+        return new Members(amount, super.generateRequestDataObject(this.baseQuery, this.baseVariable, this.baseResponseKey));
     }
 
     getOrganizationTeams(amount: number): Teams {
-        return new Teams(amount, super.generateRequestDataObject(this.baseQuery,this.baseVariable,this.baseResponseKey));
+        return new Teams(amount, super.generateRequestDataObject(this.baseQuery, this.baseVariable, this.baseResponseKey));
     }
 
     getOrganizationRepositories(amount: number): Repositories {
-        return new Repositories(amount, super.generateRequestDataObject(this.baseQuery,this.baseVariable,this.baseResponseKey));
+        return new Repositories(amount, super.generateRequestDataObject(this.baseQuery, this.baseVariable, this.baseResponseKey));
     }
 }

@@ -71,17 +71,25 @@ class Crawl {
         let test: Organization = new Organization("adessoAG");
         let user: User[] = await test.getOrganizationMembers(INSPECT_MAX_BYTES).getMembers();
         for (let userEinzeln of user) {
-            console.log(await userEinzeln.getUserName())
-            console.log(await userEinzeln.getUserAvatarUrl())
-            console.log(await userEinzeln.getUserCompany())
-            console.log(await userEinzeln.getUserEmail())
-            // userInfo = userInfo.concat(await userEinzeln.getUserContributedRepositories())
-            console.log("HI")
+            // const userName =  userEinzeln.getUserName();
+            // const avatarURL =  userEinzeln.getUserAvatarUrl();
+            // const company =  userEinzeln.getUserCompany();
+            // const email =  userEinzeln.getUserEmail();
+            // const finalResult = [await userName, await avatarURL, await company, await email];
+            let userName:string[];
+            let avatarURL:string[];
+            let company:string[];
+            let email:string[];
+            [userName, avatarURL, company, email] = await Promise.all([userEinzeln.getUserName(), userEinzeln.getUserAvatarUrl(), userEinzeln.getUserCompany(), userEinzeln.getUserEmail()]);
+            console.log(userName);
+            console.log(avatarURL);
+            console.log(company);
+            console.log(email);
           }
-
+ 
           return userInfo;
-
     }
+    
     async getUserInformation():Promise<string[]>{
         let userInfo:string[] = [];
         let user: User = new User("FrederikSchlemmer");
