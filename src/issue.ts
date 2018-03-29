@@ -2,7 +2,7 @@ import { postRequest } from "./postRequest";
 import { previousRequestData } from "./interfaceRequestData";
 
 export enum CrawlIssue {
-    TITLE
+    TITLE = "title",
 }
 
 export class Issue extends postRequest{
@@ -32,8 +32,8 @@ export class Issue extends postRequest{
 
         switch (crawlInformation) {
             case CrawlIssue.TITLE:
-                keyValue = "title";
-                responseKeyValues = ["title"];
+                keyValue = CrawlIssue.TITLE.valueOf();
+                responseKeyValues = [CrawlIssue.TITLE.valueOf()];
                 break;
             default:
                 return Promise.reject(new Error('No suitable information found for user!'));

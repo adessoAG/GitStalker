@@ -3,7 +3,7 @@ import { Issue } from "./issue";
 import { Issues } from "./issues";
 
 export enum CrawlRepository {
-    DESCRIPTION,
+    DESCRIPTION = "description",
 }
 
 export class Repository extends postRequest {
@@ -29,8 +29,8 @@ export class Repository extends postRequest {
 
         switch (crawlInformation) {
             case CrawlRepository.DESCRIPTION:
-                keyValue = "description";
-                responseKeyValues = ["description"];
+                keyValue = CrawlRepository.DESCRIPTION.valueOf();
+                responseKeyValues = [CrawlRepository.DESCRIPTION.valueOf()];
                 break;
             default:
                 return Promise.reject(new Error('No suitable information found for user!'));
