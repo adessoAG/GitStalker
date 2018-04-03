@@ -2,6 +2,7 @@ import axios from 'axios';
 import config from './config'
 import { CrawlOrganization } from './organization';
 import { ActiveRespository } from './activeRepository';
+import { StarredRespository } from './starredRepository';
 
 export abstract class postRequest {
 
@@ -14,7 +15,7 @@ export abstract class postRequest {
             query: queryContent,
         })
             .then(async function (response) {
-                return await callback(response.data.data, crawlInformation);
+                return callback(response.data.data, crawlInformation);
 
             })
             .catch(function (error) {
@@ -22,7 +23,7 @@ export abstract class postRequest {
             });
     }
 
-    async processResponse(response: any, crawlInformation: CrawlOrganization): Promise<string[]> {
+    processResponse(response: any, crawlInformation: CrawlOrganization) {
         // responseKeys.every(function(keys) {
         //     response = response[keys];
         //     return !isArray(response);
@@ -39,27 +40,32 @@ export abstract class postRequest {
 
         switch (crawlInformation) {
             case CrawlOrganization.SearchMostTop10StarRepos:
-
-                break;
-            case CrawlOrganization.SearchMostTop10ActiveRepos:
-            var activeRepositories:Array<ActiveRespository> = new Array<ActiveRespository>();
+                var starredRepositories: Array<StarredRespository> = new Array<StarredRespository>();
                 response.search.edges.forEach(element => {
-                    activeRepositories.push(new ActiveRespository(element.node.name,element.node.description,element.node.defaultBranchRef.target.history.totalCount));
+                    starredRepositories.push(new StarredRespository(element.node.name, element.node.description, element.node.stargazers.totalCount));
+                });
+                return starredRepositories;
+
+            case CrawlOrganization.SearchMostTop10ActiveRepos:
+                var activeRepositories: Array<ActiveRespository> = new Array<ActiveRespository>();
+                response.search.edges.forEach(element => {
+                    activeRepositories.push(new ActiveRespository(element.node.name, element.node.description, element.node.defaultBranchRef.target.history.totalCount));
                 });
                 sortActiveRepositories(activeRepositories);
-                console.log(activeRepositories);
-            break;
+                return activeRepositories;
+
+            default:
+                return response;
         }
-        return response;
     }
 }
 
-function sortActiveRepositories(activeRespositories:Array<ActiveRespository>){
-    activeRespositories.sort((a,b) => {
-        if(a.getCommitAmount() == b.getCommitAmount()){
+function sortActiveRepositories(activeRespositories: Array<ActiveRespository>) {
+    activeRespositories.sort((a, b) => {
+        if (a.getCommitAmount() == b.getCommitAmount()) {
             return 0;
         } else {
-            if(a.getCommitAmount() > b.getCommitAmount() ) {
+            if (a.getCommitAmount() > b.getCommitAmount()) {
                 return -1;
             }
             else if (a.getCommitAmount() < b.getCommitAmount()) {
