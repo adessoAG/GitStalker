@@ -1,108 +1,94 @@
 import { postRequest } from './postRequest';
-import { Members } from './members';
 import { INSPECT_MAX_BYTES } from 'buffer';
-import { Teams } from './teams';
-import { Repositories } from './repositories';
-import { previousRequestData } from './interfaceRequestData';
 
 export enum CrawlOrganization {
-    LOGIN = "login",
-    AVATAR_URL = "avatarUrl",
-    DESCRIPTION = "description",
-    MEMBERS = "members",
-    DATABASE_ID = "avatarUrl",
-    ID = "id",
-    LOCATION = "location",
-    NAME = "name",
-
+    SearchMostTop10StarRepos,
+    SearchMostTop10ActiveRepos,
+    SearchMostTop10ActiveUsers
 }
 
 export class Organization extends postRequest {
 
-    readonly baseQuery: string;
-    readonly baseResponseKey: string[];
+    private mostTop10StarRepos: string;
+    private mostTop10ActiveRepos: string;
+    private mostTop10ActiveUsersIDs: string;
 
 
     constructor(organizationName: string) {
         super();
-        this.baseQuery = `query {
-            organization(login: "`+ organizationName + `") {
-              insertHere
+        this.mostTop10StarRepos = `query SearchMostTop10StarRepos {
+            search(query: "user:`+ organizationName + ` stars:>=insertStarAmount", type: REPOSITORY, first: 10) {
+              edges {
+                node {
+                  ... on Repository {
+                    name
+                    description
+                    stargazers {
+                      totalCount
+                    }
+                  }
+                }
+              }
             }
           }
           `;
-        this.baseResponseKey = ["organization"];
+        this.mostTop10ActiveRepos = `query SearchMostTop10ActiveRepos {
+            search(query: "user:`+ organizationName + `", type: REPOSITORY, first: 100) {
+              repositoryCount
+              edges {
+                node {
+                  ... on Repository {
+                    name
+                    description
+                    defaultBranchRef {
+                      target {
+                        ... on Commit {
+                          history(first: 100, since: "insertDate") {
+                            totalCount
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          `;
     }
 
     private async doPostCalls(crawlInformation: CrawlOrganization) {
-        let keyValue: string;
-        let responseKeyValues: string[];
+        let query: string;
 
         switch (crawlInformation) {
-            case CrawlOrganization.LOGIN:
-                keyValue = CrawlOrganization.LOGIN.valueOf();
-                responseKeyValues = [CrawlOrganization.LOGIN.valueOf()];
+            case CrawlOrganization.SearchMostTop10StarRepos:
+                query = this.mostTop10StarRepos;
                 break;
-            case CrawlOrganization.AVATAR_URL:
-                keyValue = CrawlOrganization.AVATAR_URL.valueOf();
-                responseKeyValues = [CrawlOrganization.AVATAR_URL.valueOf()];
-                break;
-            case CrawlOrganization.DESCRIPTION:
-                keyValue = CrawlOrganization.DESCRIPTION.valueOf();
-                responseKeyValues = [CrawlOrganization.DESCRIPTION.valueOf()];
-                break;
-            case CrawlOrganization.ID:
-                keyValue = CrawlOrganization.ID.valueOf();
-                responseKeyValues = [CrawlOrganization.ID.valueOf()];
-                break;
-            case CrawlOrganization.LOCATION:
-                keyValue = CrawlOrganization.LOCATION.valueOf();
-                responseKeyValues = [CrawlOrganization.LOCATION.valueOf()];
-                break;
-            case CrawlOrganization.NAME:
-                keyValue = CrawlOrganization.NAME.valueOf();
-                responseKeyValues = [CrawlOrganization.NAME.valueOf()];
+            case CrawlOrganization.SearchMostTop10ActiveRepos:
+                query = this.mostTop10ActiveRepos;
                 break;
             default:
                 return Promise.reject(new Error('No suitable information found for user!'));
         }
 
-        return await super.startPost(this.baseQuery.replace("insertHere", keyValue), this.baseResponseKey.concat(responseKeyValues), super.processResponse);
+        return await super.startPost(query, super.processResponse, crawlInformation);
     }
 
-    async getOrganizationLogin() {
-        return await this.doPostCalls(CrawlOrganization.LOGIN);
+    async getTop10StarRepos(minStarAmount: number) {
+        this.mostTop10StarRepos = this.mostTop10StarRepos.replace("insertStarAmount", minStarAmount.toString());
+        return await this.doPostCalls(CrawlOrganization.SearchMostTop10StarRepos);
     }
 
-    async getOrganizationAvatarURL() {
-        return await this.doPostCalls(CrawlOrganization.AVATAR_URL);
+    async getTop10ActiveRepos() {
+        this.mostTop10ActiveRepos = this.mostTop10ActiveRepos.replace("insertDate",this.getDatePrevious7Days().toISOString());
+        return await this.doPostCalls(CrawlOrganization.SearchMostTop10ActiveRepos);
     }
 
-    async getOrganizationDescription() {
-        return await this.doPostCalls(CrawlOrganization.DESCRIPTION);
+    getDatePrevious7Days():Date {
+        var date = new Date();
+        date.setDate(date.getDate() - 7);
+        return date;
     }
 
-    async getOrganizationID() {
-        return await this.doPostCalls(CrawlOrganization.ID);
-    }
 
-    async getOrganizationLocation() {
-        return await this.doPostCalls(CrawlOrganization.LOCATION);
-    }
-
-    async getOrganizationName() {
-        return await this.doPostCalls(CrawlOrganization.NAME);
-    }
-
-    getOrganizationMembers(amount: number): Members {
-        return new Members(amount, super.generateRequestDataObject(this.baseQuery, this.baseResponseKey));
-    }
-
-    getOrganizationTeams(amount: number): Teams {
-        return new Teams(amount, super.generateRequestDataObject(this.baseQuery, this.baseResponseKey));
-    }
-
-    getOrganizationRepositories(amount: number): Repositories {
-        return new Repositories(amount, super.generateRequestDataObject(this.baseQuery, this.baseResponseKey));
-    }
 }

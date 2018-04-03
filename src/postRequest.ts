@@ -1,60 +1,73 @@
 import axios from 'axios';
 import config from './config'
-import { previousRequestData } from './interfaceRequestData';
+import { CrawlOrganization } from './organization';
+import { ActiveRespository } from './activeRepository';
 
-export abstract class postRequest{
+export abstract class postRequest {
 
-    constructor(){
+    constructor() {
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + config.AUTH_TOKEN;
     }
 
-    async startPost(queryContent:string,responseKeys:string[],callback:any):Promise<string[]>{
+    async startPost(queryContent: string, callback: any, crawlInformation: CrawlOrganization): Promise<string[]> {
         return axios.post(config.URL_PATH, {
             query: queryContent,
-          })
-          .then(async function (response) {
-             return await callback(response.data.data,responseKeys);
-            
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-    }
+        })
+            .then(async function (response) {
+                return await callback(response.data.data, crawlInformation);
 
-    async processResponse(response:any,responseKeys:string[]):Promise<string[]>{
-        responseKeys.every(function(keys) {
-            response = response[keys];
-            return !isArray(response);
-        });
-
-        let responseData:string[] = [];
-        if(isArray(response)){
-            response.forEach(element => {
-                responseData = responseData.concat(element[responseKeys[responseKeys.length-1]]);
             })
-        } else responseData.push(response);
-
-        return responseData;
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
-    generateRequestDataObject(baseQuery: string,baseResponseKey: string[]): previousRequestData {
-        let previousRequest: previousRequestData = {
-            baseQuery: baseQuery,
-            responseKeys: baseResponseKey,
+    async processResponse(response: any, crawlInformation: CrawlOrganization): Promise<string[]> {
+        // responseKeys.every(function(keys) {
+        //     response = response[keys];
+        //     return !isArray(response);
+        // });
+
+        // let responseData:string[] = [];
+        // if(isArray(response)){
+        //     response.forEach(element => {
+        //         responseData = responseData.concat(element[responseKeys[responseKeys.length-1]]);
+        //     })
+        // } else responseData.push(response);
+
+        // return responseData;
+
+        switch (crawlInformation) {
+            case CrawlOrganization.SearchMostTop10StarRepos:
+
+                break;
+            case CrawlOrganization.SearchMostTop10ActiveRepos:
+            var activeRepositories:Array<ActiveRespository> = new Array<ActiveRespository>();
+                response.search.edges.forEach(element => {
+                    activeRepositories.push(new ActiveRespository(element.node.name,element.node.description,element.node.defaultBranchRef.target.history.totalCount));
+                });
+                sortActiveRepositories(activeRepositories);
+                console.log(activeRepositories);
+            break;
         }
-
-        return previousRequest;
-    }
-
-    generateBaseResponseKeys(previousBaseResponseKey: string[], baseResponseKey: string[]): string[] {
-        return previousBaseResponseKey.concat(baseResponseKey);
-    }
-
-    generateBaseQuery(previousBaseQuery: string, baseQuery: string): string {
-        return previousBaseQuery.replace("insertHere", baseQuery);
+        return response;
     }
 }
 
-function isArray(jsonData:JSON):boolean {
-    return Object.prototype.toString.call(jsonData) === '[object Array]';
+function sortActiveRepositories(activeRespositories:Array<ActiveRespository>){
+    activeRespositories.sort((a,b) => {
+        if(a.getCommitAmount() == b.getCommitAmount()){
+            return 0;
+        } else {
+            if(a.getCommitAmount() > b.getCommitAmount() ) {
+                return -1;
+            }
+            else if (a.getCommitAmount() < b.getCommitAmount()) {
+                return 1;
+            }
+        }
+    })
 }
+// function isArray(jsonData:JSON):boolean {
+//     return Object.prototype.toString.call(jsonData) === '[object Array]';
+// }
