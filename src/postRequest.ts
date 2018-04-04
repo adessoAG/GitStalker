@@ -1,8 +1,9 @@
 import axios from 'axios';
 import config from './config'
-import { CrawlOrganization } from './organization';
+import { CrawlOrganization, Organization } from './organization';
 import { ActiveRespository } from './activeRepository';
 import { StarredRespository } from './starredRepository';
+import { ActiveUser } from './activeUser';
 
 export abstract class postRequest {
 
@@ -10,7 +11,7 @@ export abstract class postRequest {
         axios.defaults.headers.common['Authorization'] = 'Bearer ' + config.AUTH_TOKEN;
     }
 
-    async startPost(queryContent: string, callback: any, crawlInformation: CrawlOrganization): Promise<string[]> {
+    async startPost(queryContent: string, callback: any, crawlInformation: CrawlOrganization) {
         return axios.post(config.URL_PATH, {
             query: queryContent,
         })
@@ -24,33 +25,38 @@ export abstract class postRequest {
     }
 
     processResponse(response: any, crawlInformation: CrawlOrganization) {
-        // responseKeys.every(function(keys) {
-        //     response = response[keys];
-        //     return !isArray(response);
-        // });
-
-        // let responseData:string[] = [];
-        // if(isArray(response)){
-        //     response.forEach(element => {
-        //         responseData = responseData.concat(element[responseKeys[responseKeys.length-1]]);
-        //     })
-        // } else responseData.push(response);
-
-        // return responseData;
-
         switch (crawlInformation) {
+            case CrawlOrganization.SearchMostTop10ActiveUsersCommits:
+                var commitAmount: number = 0;
+                for (let commitInfo of response.user.contributedRepositories.nodes) {
+                    if (commitInfo.defaultBranchRef != null) {
+                        commitAmount = + commitInfo.defaultBranchRef.target.history.totalCount;
+                    }
+                }
+                var activeUser: ActiveUser | null = functiontofindIndexByKeyValue(Organization.activeUsers, "login", response.user.login);
+                if (activeUser != null) {
+                    activeUser.setCommitAmount(commitAmount)
+
+                }
+                break;
+            case CrawlOrganization.SearchMostTop10ActiveUserInformation:
+                var activeUsers: Array<ActiveUser> = new Array<ActiveUser>();
+                for (let userInfo of response.organization.members.nodes) {
+                    activeUsers.push(new ActiveUser(userInfo.name, userInfo.login, userInfo.id, 0));
+                }
+                return activeUsers;
             case CrawlOrganization.SearchMostTop10StarRepos:
                 var starredRepositories: Array<StarredRespository> = new Array<StarredRespository>();
-                response.search.edges.forEach(element => {
-                    starredRepositories.push(new StarredRespository(element.node.name, element.node.description, element.node.stargazers.totalCount));
-                });
+                for (let repoInfo of response.search.edges) {
+                    starredRepositories.push(new StarredRespository(repoInfo.node.name, repoInfo.node.description, repoInfo.node.stargazers.totalCount));
+                }
                 return starredRepositories;
 
             case CrawlOrganization.SearchMostTop10ActiveRepos:
                 var activeRepositories: Array<ActiveRespository> = new Array<ActiveRespository>();
-                response.search.edges.forEach(element => {
-                    activeRepositories.push(new ActiveRespository(element.node.name, element.node.description, element.node.defaultBranchRef.target.history.totalCount));
-                });
+                for (let repoInfo of response.search.edges) {
+                    activeRepositories.push(new ActiveRespository(repoInfo.node.name, repoInfo.node.description, repoInfo.node.defaultBranchRef.target.history.totalCount));
+                }
                 sortActiveRepositories(activeRepositories);
                 return activeRepositories;
 
@@ -74,6 +80,13 @@ function sortActiveRepositories(activeRespositories: Array<ActiveRespository>) {
         }
     })
 }
-// function isArray(jsonData:JSON):boolean {
-//     return Object.prototype.toString.call(jsonData) === '[object Array]';
-// }
+
+function functiontofindIndexByKeyValue(arraytosearch: Array<ActiveUser>, key: string, valuetosearch: string) {
+
+    for (var i = 0; i < arraytosearch.length; i++) {
+        if (arraytosearch[i].getUserLogin() == valuetosearch) {
+            return arraytosearch[i];
+        }
+    }
+    return null;
+}
