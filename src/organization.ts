@@ -113,7 +113,6 @@ export class Organization extends postRequest {
 
   async getTop10ActiveUsers() {
     Organization.activeUsers = await this.doPostCalls(this.queryOrganizationMembersInformation, CrawlOrganization.SearchMostTop10ActiveUserInformation);
-    console.log(Organization.activeUsers.length)
     var commitPromises: Array<Promise<any>> = new Array<Promise<any>>();
     for (let activeUser of Organization.activeUsers) {
       commitPromises.push(this.doPostCalls(this.queryMostTop10ActiveUsersCommits
