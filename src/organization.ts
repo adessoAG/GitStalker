@@ -1,14 +1,7 @@
 import { postRequest } from './postRequest';
 import { INSPECT_MAX_BYTES } from 'buffer';
 import { ActiveUser } from './activeUser';
-import { WSAVERNOTSUPPORTED } from 'constants';
-
-export enum CrawlOrganization {
-  SearchMostTop10StarRepos,
-  SearchMostTop10ActiveRepos,
-  SearchMostTop10ActiveUserInformation,
-  SearchMostTop10ActiveUsersCommits
-}
+import { CrawlInformation } from './CrawlInformation';
 
 export class Organization extends postRequest {
 
@@ -16,7 +9,7 @@ export class Organization extends postRequest {
   readonly queryMostTop10ActiveRepos: string;
   readonly queryOrganizationMembersInformation: string;
   readonly queryMostTop10ActiveUsersCommits: string;
-  public static activeUsers: Array<ActiveUser> = new Array<ActiveUser>();
+  public activeUsers: Array<ActiveUser> = new Array<ActiveUser>();
 
 
   constructor(organizationName: string) {
@@ -79,6 +72,8 @@ export class Organization extends postRequest {
     this.queryMostTop10ActiveUsersCommits = `query SearchMostTop10ActiveUsers {
       user(login: "insertLogin") {
         login
+        id
+        name
         contributedRepositories(first: 100) {
           nodes {
             defaultBranchRef {
@@ -99,31 +94,36 @@ export class Organization extends postRequest {
 
   }
 
-  private async doPostCalls(query: string, crawlInformation: CrawlOrganization) {
+  private async doPostCalls(query: string, crawlInformation: CrawlInformation) {
     return await super.startPost(query, super.processResponse, crawlInformation);
   }
 
   async getTop10StarRepos(minStarAmount: number) {
-    return await this.doPostCalls(this.queryMostTop10StarRepos.replace("insertStarAmount", minStarAmount.toString()), CrawlOrganization.SearchMostTop10StarRepos);
+    return await this.doPostCalls(this.queryMostTop10StarRepos.replace("insertStarAmount", minStarAmount.toString()), CrawlInformation.SearchMostTop10StarRepos);
   }
 
   async getTop10ActiveRepos() {
-    return await this.doPostCalls(this.queryMostTop10ActiveRepos.replace("insertDate", this.getDatePrevious7Days().toISOString()), CrawlOrganization.SearchMostTop10ActiveRepos);
+    return await this.doPostCalls(this.queryMostTop10ActiveRepos.replace("insertDate", this.getDatePrevious7Days().toISOString()), CrawlInformation.SearchMostTop10ActiveRepos);
   }
 
   async getTop10ActiveUsers() {
-    Organization.activeUsers = await this.doPostCalls(this.queryOrganizationMembersInformation, CrawlOrganization.SearchMostTop10ActiveUserInformation);
-    var commitPromises: Array<Promise<any>> = new Array<Promise<any>>();
-    for (let activeUser of Organization.activeUsers) {
+    this.activeUsers = await this.doPostCalls(this.queryOrganizationMembersInformation, CrawlInformation.SearchMostTop10ActiveUserInformation);
+    var commitPromises: Array<Promise<ActiveUser>> = new Array<Promise<ActiveUser>>();
+    for (let activeUser of this.activeUsers) {
       commitPromises.push(this.doPostCalls(this.queryMostTop10ActiveUsersCommits
         .replace('insertLogin', activeUser.getUserLogin())
         .replace("insertDate", this.getDatePrevious7Days().toISOString())
         .replace("insertID", activeUser.getUserID())
-        , CrawlOrganization.SearchMostTop10ActiveUsersCommits));
+        , CrawlInformation.SearchMostTop10ActiveUsersCommits));
     }
-
-    await Promise.all(commitPromises);
-    return Organization.activeUsers;
+    this.activeUsers = [];
+    await Promise.all(commitPromises).then(result => {
+          for(let activeUser of result){
+            this.activeUsers.push(activeUser);
+          }
+       });
+    sortActiveUsers(this.activeUsers);
+    return this.activeUsers;
   }
 
   getDatePrevious7Days(): Date {
@@ -132,4 +132,19 @@ export class Organization extends postRequest {
     return date;
   }
 
+}
+
+function sortActiveUsers(activeUsers: Array<ActiveUser>) {
+  activeUsers.sort((a, b) => {
+      if (a.getCommitAmount() == b.getCommitAmount()) {
+          return 0;
+      } else {
+          if (a.getCommitAmount() > b.getCommitAmount()) {
+              return -1;
+          }
+          else if (a.getCommitAmount() < b.getCommitAmount()) {
+              return 1;
+          }
+      }
+  })
 }

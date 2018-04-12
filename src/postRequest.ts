@@ -1,6 +1,6 @@
 import axios from 'axios';
 import config from './config'
-import { CrawlOrganization, Organization } from './organization';
+import { CrawlInformation } from './CrawlInformation';
 import { ActiveRespository } from './activeRepository';
 import { StarredRespository } from './starredRepository';
 import { ActiveUser } from './activeUser';
@@ -8,11 +8,11 @@ import { ActiveUser } from './activeUser';
 export abstract class postRequest {
 
     constructor() {
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + config.AUTH_TOKEN;
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + '8e5418de6adba926f72e9dd91cfa5cd0d4042664';
     }
 
-    async startPost(queryContent: string, callback: any, crawlInformation: CrawlOrganization) {
-        return axios.post(config.URL_PATH, {
+    async startPost(queryContent: string, callback: any, crawlInformation: CrawlInformation) {
+        return axios.post('https://api.github.com/graphql', {
             query: queryContent,
         })
             .then(async function (response) {
@@ -24,37 +24,33 @@ export abstract class postRequest {
             });
     }
 
-    processResponse(response: any, crawlInformation: CrawlOrganization) {
+    processResponse(response: any, crawlInformation: CrawlInformation) {
         switch (crawlInformation) {
-            case CrawlOrganization.SearchMostTop10ActiveUsersCommits:
+            case CrawlInformation.SearchMostTop10ActiveUsersCommits:
                 var commitAmount: number = 0;
                 for (let commitInfo of response.user.contributedRepositories.nodes) {
                     if (commitInfo.defaultBranchRef != null) {
                         commitAmount = + commitInfo.defaultBranchRef.target.history.totalCount;
                     }
                 }
-                var activeUser: ActiveUser | null = functiontofindIndexByKeyValue(Organization.activeUsers, "login", response.user.login);
-                if (activeUser != null) {
-                    activeUser.setCommitAmount(commitAmount)
-                }
-                sortActiveUsers(Organization.activeUsers);
-                break;
 
-            case CrawlOrganization.SearchMostTop10ActiveUserInformation:
+                return new ActiveUser(response.user.name,response.user.login,response.user.id,commitAmount);
+
+            case CrawlInformation.SearchMostTop10ActiveUserInformation:
                 var activeUsers: Array<ActiveUser> = new Array<ActiveUser>();
                 for (let userInfo of response.organization.members.nodes) {
                     activeUsers.push(new ActiveUser(userInfo.name, userInfo.login, userInfo.id, 0));
                 }
                 return activeUsers;
 
-            case CrawlOrganization.SearchMostTop10StarRepos:
+            case CrawlInformation.SearchMostTop10StarRepos:
                 var starredRepositories: Array<StarredRespository> = new Array<StarredRespository>();
                 for (let repoInfo of response.search.edges) {
                     starredRepositories.push(new StarredRespository(repoInfo.node.name, repoInfo.node.description, repoInfo.node.stargazers.totalCount));
                 }
                 return starredRepositories;
 
-            case CrawlOrganization.SearchMostTop10ActiveRepos:
+            case CrawlInformation.SearchMostTop10ActiveRepos:
                 var activeRepositories: Array<ActiveRespository> = new Array<ActiveRespository>();
                 for (let repoInfo of response.search.edges) {
                     activeRepositories.push(new ActiveRespository(repoInfo.node.name, repoInfo.node.description, repoInfo.node.defaultBranchRef.target.history.totalCount));
@@ -70,21 +66,6 @@ export abstract class postRequest {
 
 function sortActiveRepositories(activeRespositories: Array<ActiveRespository>) {
     activeRespositories.sort((a, b) => {
-        if (a.getCommitAmount() == b.getCommitAmount()) {
-            return 0;
-        } else {
-            if (a.getCommitAmount() > b.getCommitAmount()) {
-                return -1;
-            }
-            else if (a.getCommitAmount() < b.getCommitAmount()) {
-                return 1;
-            }
-        }
-    })
-}
-
-function sortActiveUsers(activeUsers: Array<ActiveUser>) {
-    activeUsers.sort((a, b) => {
         if (a.getCommitAmount() == b.getCommitAmount()) {
             return 0;
         } else {
