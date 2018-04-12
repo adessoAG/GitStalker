@@ -12,6 +12,10 @@ export class ActiveUser {
         this.userCommits = userCommits;
     }
 
+    public getUserName(){
+        return this.userName;
+    }
+    
     public getUserLogin() {
         return this.userLogin;
     }

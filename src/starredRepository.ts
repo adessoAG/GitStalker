@@ -13,4 +13,12 @@ export class StarredRespository {
     public getStarAmount() {
         return this.repositoryStars;
     }
+
+    public getRepositoryName() {
+        return this.repositoryName;
+    }
+
+    public getRepositoryDescription() {
+        return this.repositoryDescription;
+    }
 }

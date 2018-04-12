@@ -8,7 +8,7 @@ import { ActiveUser } from './activeUser';
 export abstract class postRequest {
 
     constructor() {
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + '8e5418de6adba926f72e9dd91cfa5cd0d4042664';
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + '48aad7316b08b382dfa1b871a990d8cf300b6fe9';
     }
 
     async startPost(queryContent: string, callback: any, crawlInformation: CrawlInformation) {

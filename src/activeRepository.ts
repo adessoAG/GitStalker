@@ -13,4 +13,12 @@ export class ActiveRespository {
     public getCommitAmount() {
         return this.repositoryCommits;
     }
+
+    public getRepositoryName() {
+        return this.repositoryName;
+    }
+
+    public getRepositoryDescription() {
+        return this.repositoryDescription;
+    }
 }
