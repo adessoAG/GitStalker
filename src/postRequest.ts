@@ -26,6 +26,8 @@ export abstract class postRequest {
 
     processResponse(response: any, crawlInformation: CrawlInformation) {
         switch (crawlInformation) {
+            case CrawlInformation.SearchIfOrganizationValid:
+            return response.organization;
             case CrawlInformation.SearchMostTop10ActiveUsersCommits:
                 var commitAmount: number = 0;
                 for (let commitInfo of response.user.contributedRepositories.nodes) {

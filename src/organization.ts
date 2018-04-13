@@ -8,6 +8,7 @@ export class Organization extends postRequest {
   readonly queryMostTop10ActiveRepos: string;
   readonly queryOrganizationMembersInformation: string;
   readonly queryMostTop10ActiveUsersCommits: string;
+  readonly queryCheckIfOrganizationValid: string;
   public activeUsers: Array<ActiveUser> = new Array<ActiveUser>();
 
 
@@ -91,10 +92,24 @@ export class Organization extends postRequest {
     }
     `;
 
+    this.queryCheckIfOrganizationValid = `{
+      organization(login: "`+ organizationName + `") {
+        id
+      }
+    }`
+
   }
 
   private async doPostCalls(query: string, crawlInformation: CrawlInformation) {
     return await super.startPost(query, super.processResponse, crawlInformation);
+  }
+
+  async checkIfOrganizationValid(): Promise<boolean>{
+    return this.doPostCalls(this.queryCheckIfOrganizationValid, CrawlInformation.SearchIfOrganizationValid).then(result => {
+           if(result){
+             return true;
+           } else return false;
+       });
   }
 
   async getTop10StarRepos(minStarAmount: number) {

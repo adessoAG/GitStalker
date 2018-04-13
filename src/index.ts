@@ -2,19 +2,7 @@ import { Organization } from './organization';
 
 export class Crawl {
 
-    constructor() {
-        // let organization: Organization = new Organization("adessoAG");
-        // // organization.getTop10StarRepos(1).then(result =>{
-        // //      console.log(result);
-        // // });
-
-        // // organization.getTop10ActiveRepos().then(result =>{
-        // //     console.log(result);
-        // // });
-        // organization.getTop10ActiveUsers().then(result => {
-        //     console.log(result);
-        // });;
-    }
+    constructor() { }
 
     public createOrganization(organizationName:string):Organization{
         return new Organization(organizationName);
