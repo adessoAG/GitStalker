@@ -72,6 +72,9 @@ export class Organization extends postRequest {
     this.queryMostTop10ActiveUsersCommits = `query SearchMostTop10ActiveUsers {
       user(login: "insertLogin") {
         login
+        repositoriesContributedTo {
+          totalCount
+        }
         id
         name
         contributedRepositories(first: 100) {
@@ -104,12 +107,12 @@ export class Organization extends postRequest {
     return await super.startPost(query, super.processResponse, crawlInformation);
   }
 
-  async checkIfOrganizationValid(): Promise<boolean>{
+  async checkIfOrganizationValid(): Promise<boolean> {
     return this.doPostCalls(this.queryCheckIfOrganizationValid, CrawlInformation.SearchIfOrganizationValid).then(result => {
-           if(result){
-             return true;
-           } else return false;
-       });
+      if (result) {
+        return true;
+      } else return false;
+    });
   }
 
   async getTop10StarRepos(minStarAmount: number) {
@@ -132,10 +135,10 @@ export class Organization extends postRequest {
     }
     this.activeUsers = [];
     await Promise.all(commitPromises).then(result => {
-          for(let activeUser of result){
-            this.activeUsers.push(activeUser);
-          }
-       });
+      for (let activeUser of result) {
+        this.activeUsers.push(activeUser);
+      }
+    });
     sortActiveUsers(this.activeUsers);
     return this.activeUsers;
   }
@@ -150,15 +153,15 @@ export class Organization extends postRequest {
 
 function sortActiveUsers(activeUsers: Array<ActiveUser>) {
   activeUsers.sort((a, b) => {
-      if (a.getCommitAmount() == b.getCommitAmount()) {
-          return 0;
-      } else {
-          if (a.getCommitAmount() > b.getCommitAmount()) {
-              return -1;
-          }
-          else if (a.getCommitAmount() < b.getCommitAmount()) {
-              return 1;
-          }
+    if (a.getCommitAmount() == b.getCommitAmount()) {
+      return 0;
+    } else {
+      if (a.getCommitAmount() > b.getCommitAmount()) {
+        return -1;
       }
+      else if (a.getCommitAmount() < b.getCommitAmount()) {
+        return 1;
+      }
+    }
   })
 }

@@ -8,7 +8,7 @@ import { ActiveUser } from './activeUser';
 export abstract class postRequest {
 
     constructor() {
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + '48aad7316b08b382dfa1b871a990d8cf300b6fe9';
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + '752047c1376866de294ac86f45cf032499ef7154';
     }
 
     async startPost(queryContent: string, callback: any, crawlInformation: CrawlInformation) {
@@ -27,7 +27,7 @@ export abstract class postRequest {
     processResponse(response: any, crawlInformation: CrawlInformation) {
         switch (crawlInformation) {
             case CrawlInformation.SearchIfOrganizationValid:
-            return response.organization;
+                return response.organization;
             case CrawlInformation.SearchMostTop10ActiveUsersCommits:
                 var commitAmount: number = 0;
                 for (let commitInfo of response.user.contributedRepositories.nodes) {
@@ -36,12 +36,12 @@ export abstract class postRequest {
                     }
                 }
 
-                return new ActiveUser(response.user.name,response.user.login,response.user.id,commitAmount);
+                return new ActiveUser(response.user.name, response.user.login, response.user.id, commitAmount, response.user.repositoriesContributedTo.totalCount);
 
             case CrawlInformation.SearchMostTop10ActiveUserInformation:
                 var activeUsers: Array<ActiveUser> = new Array<ActiveUser>();
                 for (let userInfo of response.organization.members.nodes) {
-                    activeUsers.push(new ActiveUser(userInfo.name, userInfo.login, userInfo.id, 0));
+                    activeUsers.push(new ActiveUser(userInfo.name, userInfo.login, userInfo.id, 0, userInfo.repositoriesContributedTo));
                 }
                 return activeUsers;
 
