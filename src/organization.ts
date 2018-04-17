@@ -1,6 +1,11 @@
 import { postRequest } from './postRequest';
 import { ActiveUser } from './activeUser';
 import { CrawlInformation } from './CrawlInformation';
+import { MostStarRepos } from './Requests/MostStarRepos';
+import { MostActiveRepos } from './Requests/MostActiveRepos';
+import { Members } from './Requests/Members';
+import { MostActiveUserCommits } from './Requests/MostActiveUserCommits';
+import { OrganizationValidation } from './Requests/OrganizationValidation';
 
 export class Organization extends postRequest {
 
@@ -14,102 +19,24 @@ export class Organization extends postRequest {
 
   constructor(organizationName: string) {
     super();
-    this.queryMostTop10StarRepos = `query SearchMostTop10StarRepos {
-            search(query: "user:`+ organizationName + ` stars:>=insertStarAmount", type: REPOSITORY, first: 10) {
-              edges {
-                node {
-                  ... on Repository {
-                    name
-                    description
-                    stargazers {
-                      totalCount
-                    }
-                  }
-                }
-              }
-            }
-          }
-          `;
-    this.queryMostTop10ActiveRepos = `query SearchMostTop10ActiveRepos {
-            search(query: "user:`+ organizationName + `", type: REPOSITORY, first: 100) {
-              repositoryCount
-              edges {
-                node {
-                  ... on Repository {
-                    name
-                    description
-                    defaultBranchRef {
-                      target {
-                        ... on Commit {
-                          history(first: 100, since: "insertDate") {
-                            totalCount
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-          `;
-    this.queryOrganizationMembersInformation = `query SearchMostTop10ActiveUserIDs {
-            organization(login: "`+ organizationName + `") {
-              members(first: 100) {
-                totalCount
-                edges {
-                  cursor
-                }
-                nodes {
-                  id
-                  login
-                  name
-                }
-              }
-            }
-          }
-          `;
-    this.queryMostTop10ActiveUsersCommits = `query SearchMostTop10ActiveUsers {
-      user(login: "insertLogin") {
-        login
-        id
-        name
-        contributedRepositories(first: 100) {
-          nodes {
-            defaultBranchRef {
-              target {
-                ... on Commit {
-                  history(first: 100, since: "insertDate", author: {id: "insertID"}) {
-                    totalCount
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      rateLimit {limit cost remaining resetAt}
-    }
-    `;
-
-    this.queryCheckIfOrganizationValid = `{
-      organization(login: "`+ organizationName + `") {
-        id
-      }
-    }`
-
+    this.queryMostTop10StarRepos = new MostStarRepos(organizationName).getQuery();
+    this.queryMostTop10ActiveRepos = new MostActiveRepos(organizationName).getQuery();
+    this.queryOrganizationMembersInformation = new Members(organizationName).getQuery();
+    this.queryMostTop10ActiveRepos = new MostActiveRepos(organizationName).getQuery();
+    this.queryMostTop10ActiveUsersCommits = new MostActiveUserCommits(organizationName).getQuery();
+    this.queryCheckIfOrganizationValid = new OrganizationValidation(organizationName).getQuery();
   }
 
   private async doPostCalls(query: string, crawlInformation: CrawlInformation) {
     return await super.startPost(query, super.processResponse, crawlInformation);
   }
 
-  async checkIfOrganizationValid(): Promise<boolean>{
+  async checkIfOrganizationValid(): Promise<boolean> {
     return this.doPostCalls(this.queryCheckIfOrganizationValid, CrawlInformation.SearchIfOrganizationValid).then(result => {
-           if(result){
-             return true;
-           } else return false;
-       });
+      if (result) {
+        return true;
+      } else return false;
+    });
   }
 
   async getTop10StarRepos(minStarAmount: number) {
@@ -132,10 +59,10 @@ export class Organization extends postRequest {
     }
     this.activeUsers = [];
     await Promise.all(commitPromises).then(result => {
-          for(let activeUser of result){
-            this.activeUsers.push(activeUser);
-          }
-       });
+      for (let activeUser of result) {
+        this.activeUsers.push(activeUser);
+      }
+    });
     sortActiveUsers(this.activeUsers);
     return this.activeUsers;
   }
@@ -150,15 +77,15 @@ export class Organization extends postRequest {
 
 function sortActiveUsers(activeUsers: Array<ActiveUser>) {
   activeUsers.sort((a, b) => {
-      if (a.getCommitAmount() == b.getCommitAmount()) {
-          return 0;
-      } else {
-          if (a.getCommitAmount() > b.getCommitAmount()) {
-              return -1;
-          }
-          else if (a.getCommitAmount() < b.getCommitAmount()) {
-              return 1;
-          }
+    if (a.getCommitAmount() == b.getCommitAmount()) {
+      return 0;
+    } else {
+      if (a.getCommitAmount() > b.getCommitAmount()) {
+        return -1;
       }
+      else if (a.getCommitAmount() < b.getCommitAmount()) {
+        return 1;
+      }
+    }
   })
 }
