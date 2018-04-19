@@ -13,7 +13,7 @@ export abstract class postRequest {
      * Set authorization headers for http requests.
      */
     constructor() {
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + '752047c1376866de294ac86f45cf032499ef7154';
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + '8e5418de6adba926f72e9dd91cfa5cd0d4042664';
     }
 
     /**

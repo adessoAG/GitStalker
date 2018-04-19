@@ -146,7 +146,7 @@ export class Organization extends postRequest {
    * Sends query to retrieve data about commits on repositories from the last 7 days.
    */
   async getMostActiveRepos() {
-    let newQuery = this.queryMostActiveRepos.replace("insertDate", this.getDatePrevious7Days().toISOString())
+    let newQuery = this.queryMostActiveRepos.replace("insertDate", this.getDatePrevious7Days().toISOString());
     return await this.doPostCalls(newQuery, CrawlInformation.SearchMostActiveRepos);
   }
 
