@@ -27,11 +27,11 @@ export class Organization extends postRequest {
    */
   constructor(organizationName: string) {
     super();
-    this.queryMostTop10StarRepos = new MostStarRepos(organizationName).getQuery();
-    this.queryMostTop10ActiveRepos = new MostActiveRepos(organizationName).getQuery();
+    this.queryMostStarRepos = new MostStarRepos(organizationName).getQuery();
+    this.queryMostActiveRepos = new MostActiveRepos(organizationName).getQuery();
     this.queryOrganizationMembersInformation = new Members(organizationName).getQuery();
-    this.queryMostTop10ActiveRepos = new MostActiveRepos(organizationName).getQuery();
-    this.queryMostTop10ActiveUsersCommits = new MostActiveUserCommits(organizationName).getQuery();
+    this.queryMostActiveRepos = new MostActiveRepos(organizationName).getQuery();
+    this.queryMostActiveUsersCommits = new MostActiveUserCommits(organizationName).getQuery();
     this.queryCheckIfOrganizationValid = new OrganizationValidation(organizationName).getQuery();
   }
 
