@@ -1,5 +1,8 @@
 import { Organization } from './organization';
 
+/**
+ * Entry point for using the GitStalker library.
+ */
 export class Crawl {
 
     constructor() { }
@@ -9,5 +12,3 @@ export class Crawl {
     }
 
 }
-
-new Crawl();
