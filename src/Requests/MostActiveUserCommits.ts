@@ -7,6 +7,9 @@ export class MostActiveUserCommits {
               login
               id
               name
+              repositoriesContributedTo(first:100) {
+                totalCount
+              }
               contributedRepositories(first: 100) {
                 nodes {
                   defaultBranchRef {
