@@ -4,12 +4,18 @@ export class ActiveUser {
     private userLogin: string;
     private userID: string;
     private userCommits: number;
+    private userContributedToRepos: number;
 
-    constructor(userName: string, userLogin: string, userID: string, userCommits: number) {
+    constructor(userName: string, userLogin: string, userID: string, userCommits: number, userContributedToRepos: number) {
         this.userName = userName;
         this.userLogin = userLogin;
         this.userID = userID;
         this.userCommits = userCommits;
+        this.userContributedToRepos = userContributedToRepos;
+    }
+
+    public getUserContributedToRepos() {
+        return this.userContributedToRepos;
     }
 
     public getUserName(){
