@@ -1,6 +1,11 @@
 import { postRequest } from './postRequest';
 import { ActiveUser } from './activeUser';
 import { CrawlInformation } from './CrawlInformation';
+import { MostStarRepos } from './Requests/MostStarRepos';
+import { MostActiveRepos } from './Requests/MostActiveRepos';
+import { Members } from './Requests/Members';
+import { MostActiveUserCommits } from './Requests/MostActiveUserCommits';
+import { OrganizationValidation } from './Requests/OrganizationValidation';
 
 /**
  * Defines request queries and sends requests to GitHub GraphQL API via parent class 'postRequest';
@@ -22,93 +27,12 @@ export class Organization extends postRequest {
    */
   constructor(organizationName: string) {
     super();
-    this.queryMostStarRepos = `query SearchMostStarRepos {
-            search(query: "user:`+ organizationName + ` stars:>=insertStarAmount", type: REPOSITORY, first: 10) {
-              edges {
-                node {
-                  ... on Repository {
-                    name
-                    description
-                    stargazers {
-                      totalCount
-                    }
-                  }
-                }
-              }
-            }
-          }
-          `;
-    this.queryMostActiveRepos = `query SearchMostActiveRepos {
-            search(query: "user:`+ organizationName + `", type: REPOSITORY, first: 100) {
-              repositoryCount
-              edges {
-                node {
-                  ... on Repository {
-                    name
-                    description
-                    defaultBranchRef {
-                      target {
-                        ... on Commit {
-                          history(first: 100, since: "insertDate") {
-                            totalCount
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-          `;
-    this.queryOrganizationMembersInformation = `query SearchMostActiveUserIDs {
-            organization(login: "`+ organizationName + `") {
-              members(first: 100) {
-                totalCount
-                edges {
-                  cursor
-                }
-                nodes {
-                  id
-                  login
-                  name
-                }
-              }
-            }
-          }
-          `;
-    this.queryMostActiveUsersCommits = `query SearchMostActiveUsers {
-      user(login: "insertLogin") {
-        login
-        repositoriesContributedTo {
-          totalCount
-        }
-        id
-        name
-        contributedRepositories(first: 100) {
-          nodes {
-            defaultBranchRef {
-              target {
-                ... on Commit {
-                  history(first: 100, since: "insertDate", author: {id: "insertID"}) {
-                    totalCount
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-      rateLimit {limit cost remaining resetAt}
-    }
-    `;
-
-    this.queryCheckIfOrganizationValid = `{
-      organization(login: "`+ organizationName + `") {
-        id
-      }
-    }`
-
+    this.queryMostTop10StarRepos = new MostStarRepos(organizationName).getQuery();
+    this.queryMostTop10ActiveRepos = new MostActiveRepos(organizationName).getQuery();
+    this.queryOrganizationMembersInformation = new Members(organizationName).getQuery();
+    this.queryMostTop10ActiveRepos = new MostActiveRepos(organizationName).getQuery();
+    this.queryMostTop10ActiveUsersCommits = new MostActiveUserCommits(organizationName).getQuery();
+    this.queryCheckIfOrganizationValid = new OrganizationValidation(organizationName).getQuery();
   }
 
   /**
