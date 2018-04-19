@@ -50,7 +50,7 @@ export abstract class postRequest {
             case CrawlInformation.SearchMostActiveUsersCommits:
                 var commitAmount: number = 0;
                 // For each user, add up all commits from all repositories that the user has committed to
-                for (let commitInfo of response.user.contributedRepositories.nodes) {
+                for (let commitInfo of response.user.repositoriesContributedTo.nodes) {
                     if (commitInfo.defaultBranchRef != null) {
                         commitAmount = + commitInfo.defaultBranchRef.target.history.totalCount;
                     }
