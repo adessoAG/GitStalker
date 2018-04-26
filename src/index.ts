@@ -5,10 +5,16 @@ import { Organization } from './organization';
  */
 export class Crawl {
 
-    constructor() { }
+    constructor() {
+        new Organization("adessoAG").crawlMemberPageData().then(function(value) {
+            console.log(value);
+          });
+    }
 
     public createOrganization(organizationName:string):Organization{
         return new Organization(organizationName);
     }
 
 }
+
+new Crawl();

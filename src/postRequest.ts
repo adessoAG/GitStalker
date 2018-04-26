@@ -2,7 +2,10 @@ import axios from 'axios';
 import { CrawlInformation } from './CrawlInformation';
 import { ActiveRespository } from './activeRepository';
 import { StarredRespository } from './starredRepository';
-import { ActiveUser } from './activeUser';
+import { PullRequest } from './Objects/PullRequest';
+import { Organization } from './Objects/Organization';
+import { ChartJSData } from './Objects/ChartJSData';
+import { Commit } from './Objects/Commit';
 
 /**
  * Communicates with GitHub GraphQL API and processes responses.
@@ -13,7 +16,7 @@ export abstract class postRequest {
      * Set authorization headers for http requests.
      */
     constructor() {
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + '8e5418de6adba926f72e9dd91cfa5cd0d4042664';
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + '84ad854f49c8451c816be9c508a0bba982f78f67  ';
     }
 
     /**
@@ -47,60 +50,116 @@ export abstract class postRequest {
         switch (crawlInformation) {
             case CrawlInformation.SearchIfOrganizationValid:
                 return response.organization;
-            case CrawlInformation.SearchMostActiveUsersCommits:
-                var commitAmount: number = 0;
-                // For each user, add up all commits from all repositories that the user has committed to
-                for (let commitInfo of response.user.repositoriesContributedTo.nodes) {
-                    if (commitInfo.defaultBranchRef != null) {
-                        commitAmount = + commitInfo.defaultBranchRef.target.history.totalCount;
-                    }
-                }
-
-                return new ActiveUser(response.user.name, response.user.login, response.user.id, commitAmount, response.user.repositoriesContributedTo.totalCount);
-
-            case CrawlInformation.SearchMostActiveUserInformation:
-                var activeUsers: Array<ActiveUser> = new Array<ActiveUser>();
-                for (let userInfo of response.organization.members.nodes) {
-                    activeUsers.push(new ActiveUser(userInfo.name, userInfo.login, userInfo.id, 0, userInfo.repositoriesContributedTo));
-                }
-
-                return activeUsers;
-
-            case CrawlInformation.SearchMostStarRepos:
-                var starredRepositories: Array<StarredRespository> = new Array<StarredRespository>();
-                for (let repoInfo of response.search.edges) {
-                    starredRepositories.push(new StarredRespository(repoInfo.node.name, repoInfo.node.description, repoInfo.node.stargazers.totalCount));
-                }
-
-                return starredRepositories;
-
-            case CrawlInformation.SearchMostActiveRepos:
-                var activeRepositories: Array<ActiveRespository> = new Array<ActiveRespository>();
-                for (let repoInfo of response.search.edges) {
-                    activeRepositories.push(new ActiveRespository(repoInfo.node.name, repoInfo.node.description, repoInfo.node.defaultBranchRef.target.history.totalCount));
-                }
-
-                sortActiveRepositories(activeRepositories);
-
-                return activeRepositories;
-
+            case CrawlInformation.MainPageData:
+                let baseData: JSON = response.organization;
+                let organizationMembersPullRequests: Array<PullRequest> = filterExternalContributedRepos(baseData.repositories.nodes, baseData.members.nodes);
+                return new Organization(baseData.name,
+                    baseData.id,
+                    baseData.location,
+                    baseData.websiteUrl,
+                    baseData.url,
+                    baseData.description,
+                    baseData.members.totalCount,
+                    baseData.teams.totalCount,
+                    baseData.repositories.totalCount,
+                    organizationMembersPullRequests.length,
+                    calculateExternalRepoActivity(organizationMembersPullRequests),
+                    calculateInternalRepoActivity(baseData.repositories.nodes));
+            case CrawlInformation.MemberPageData:
+            calculateOrganizationMemberActivity(response.error);
+            break;
             default:
                 return response;
         }
     }
 }
+function calculateOrganizationMemberActivity(organizationMembers: Array<JSON>){
+    console.log(organizationMembers)
+}
 
-function sortActiveRepositories(activeRespositories: Array<ActiveRespository>) {
-    activeRespositories.sort((a, b) => {
-        if (a.getCommitAmount() == b.getCommitAmount()) {
-            return 0;
-        } else {
-            if (a.getCommitAmount() > b.getCommitAmount()) {
-                return -1;
-            }
-            else if (a.getCommitAmount() < b.getCommitAmount()) {
-                return 1;
+function filterExternalContributedRepos(organizationReposIDsJSON: Array<JSON>, organizationMembersPullRequestsJSON: Array<JSON>): Array<PullRequest> {
+    const organizationReposIDs: Array<string> = new Array<string>();
+    const organizationMembersPullRequests: Array<PullRequest> = new Array<PullRequest>();
+
+    for (let organizationIDs of organizationReposIDsJSON) {
+        organizationReposIDs.push(organizationIDs.id);
+    }
+
+    for (let pullRequestArrays of organizationMembersPullRequestsJSON) {
+        for (let pullRequestData of pullRequestArrays.pullRequests.nodes) {
+            if (organizationReposIDs.indexOf(pullRequestData.repository.id) == -1) {
+                organizationMembersPullRequests.push(new PullRequest(new Date(pullRequestData.createdAt), pullRequestData.repository.id, pullRequestData.repository.owner.id))
             }
         }
-    })
+    }
+    return organizationMembersPullRequests;
+}
+
+function filterExternalContributedRepos7Days(externalPullRequests: Array<PullRequest>) {
+    let pullrequestsCopy: Array<PullRequest> = new Array<PullRequest>();
+    externalPullRequests.sort((a: PullRequest, b: PullRequest) => {
+        return +a.getPullRequestCreationDate().getTime() - +b.getPullRequestCreationDate().getTime();
+    });
+
+    for (let externalPullRequest of externalPullRequests) {
+        if (!(getDatePrevious7Days().getTime() > externalPullRequest.getPullRequestCreationDate().getTime())) {
+            pullrequestsCopy.push(externalPullRequest);
+        }
+    }
+    return pullrequestsCopy;
+}
+
+function calculateExternalRepoActivity(externalPullRequests: Array<PullRequest>): ChartJSData {
+    const externalRepoActivityDays: Array<string> = new Array<string>();
+    const externalRepoActivityAmount: Array<number> = new Array<number>();
+
+    for (let externalPullRequest of filterExternalContributedRepos7Days(externalPullRequests)) {
+        let formattedDate: string = getFormattedDate(externalPullRequest.getPullRequestCreationDate());
+        if (externalRepoActivityDays.indexOf(formattedDate) == -1) {
+            externalRepoActivityDays.push(formattedDate);
+            externalRepoActivityAmount.push(1);
+        } else {
+            externalRepoActivityAmount[externalRepoActivityDays.indexOf(formattedDate)] = ++externalRepoActivityAmount[externalRepoActivityDays.indexOf(formattedDate)];
+        }
+    }
+    return new ChartJSData(externalRepoActivityDays, externalRepoActivityAmount);
+}
+
+function calculateInternalRepoActivity(internalRepoCommitActivitys: Array<JSON>) {
+    const internalRepoActivitys: Array<Commit> = new Array<Commit>();
+    const internalRepoActivityDays: Array<string> = new Array<string>();
+    const internalRepoActivityAmount: Array<number> = new Array<number>();
+
+    for (let internalRepoCommitActivity of internalRepoCommitActivitys) {
+        let internalRepoName: string = internalRepoCommitActivity.name;
+        for (let repoCommit of internalRepoCommitActivity.defaultBranchRef.target.history.nodes) {
+            if (repoCommit.committer.user != null) {
+                internalRepoActivitys.push(new Commit(new Date(repoCommit.committedDate), repoCommit.changedFiles, repoCommit.committer.user.name, internalRepoName));
+            } else internalRepoActivitys.push(new Commit(new Date(repoCommit.committedDate), repoCommit.changedFiles, "undefined", internalRepoName));
+        }
+    }
+    internalRepoActivitys.sort((a: Commit, b: Commit) => {
+        return +a.getCommitCreationDate().getTime() - +b.getCommitCreationDate().getTime();
+    });
+
+    for (let internalRepoActivity of internalRepoActivitys) {
+        let formattedDate: string = getFormattedDate(internalRepoActivity.getCommitCreationDate());
+        if (internalRepoActivityDays.indexOf(formattedDate) == -1) {
+            internalRepoActivityDays.push(formattedDate);
+            internalRepoActivityAmount.push(1);
+        } else {
+            internalRepoActivityAmount[internalRepoActivityDays.indexOf(formattedDate)] = ++internalRepoActivityAmount[internalRepoActivityDays.indexOf(formattedDate)];
+        }
+    }
+    return new ChartJSData(internalRepoActivityDays, internalRepoActivityAmount);
+}
+
+function getDatePrevious7Days(): Date {
+    var date = new Date();
+    date.setDate(date.getDate() - 7);
+    return date;
+}
+
+function getFormattedDate(date: Date): string {
+    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
 }

@@ -1,23 +1,17 @@
 import { postRequest } from './postRequest';
-import { ActiveUser } from './activeUser';
 import { CrawlInformation } from './CrawlInformation';
-import { MostStarRepos } from './Requests/MostStarRepos';
-import { MostActiveRepos } from './Requests/MostActiveRepos';
-import { Members } from './Requests/Members';
-import { MostActiveUserCommits } from './Requests/MostActiveUserCommits';
 import { OrganizationValidation } from './Requests/OrganizationValidation';
+import { MainPageData } from './Requests/MainPageData';
+import { MemberData } from './Requests/MemberData';
 
 /**
  * Defines request queries and sends requests to GitHub GraphQL API via parent class 'postRequest';
  */
 export class Organization extends postRequest {
 
-  readonly queryMostStarRepos: string;
-  readonly queryMostActiveRepos: string;
-  readonly queryOrganizationMembersInformation: string;
-  readonly queryMostActiveUsersCommits: string;
   readonly queryCheckIfOrganizationValid: string;
-  public activeUsers: Array<ActiveUser> = new Array<ActiveUser>();
+  readonly queryMainPageData: string;
+  readonly queryMemberData: string;
 
 
   /**
@@ -27,12 +21,9 @@ export class Organization extends postRequest {
    */
   constructor(organizationName: string) {
     super();
-    this.queryMostStarRepos = new MostStarRepos(organizationName).getQuery();
-    this.queryMostActiveRepos = new MostActiveRepos(organizationName).getQuery();
-    this.queryOrganizationMembersInformation = new Members(organizationName).getQuery();
-    this.queryMostActiveRepos = new MostActiveRepos(organizationName).getQuery();
-    this.queryMostActiveUsersCommits = new MostActiveUserCommits(organizationName).getQuery();
     this.queryCheckIfOrganizationValid = new OrganizationValidation(organizationName).getQuery();
+    this.queryMainPageData = new MainPageData(organizationName, this.getDatePrevious7Days()).getQuery();
+    this.queryMemberData = new MemberData(organizationName, this.getDatePrevious7Days()).getQuery();
   }
 
   /**
@@ -56,56 +47,12 @@ export class Organization extends postRequest {
     });
   }
 
-  /**
-   * 
-   * @param minStarAmount Minimum amount of stars to filter by. Required field in GraphQL search query
-   * Sends query to retrieve data about stars on repositories.
-   */
-  async getMostStarRepos(minStarAmount: number) {
-    let newQuery = this.queryMostStarRepos.replace("insertStarAmount", minStarAmount.toString());
-    return await this.doPostCalls(newQuery, CrawlInformation.SearchMostStarRepos);
+  async crawlMainPageData() {
+    return this.doPostCalls(this.queryMainPageData, CrawlInformation.MainPageData);
   }
 
-  /**
-   * Sends query to retrieve data about commits on repositories from the last 7 days.
-   */
-  async getMostActiveRepos() {
-    let newQuery = this.queryMostActiveRepos.replace("insertDate", this.getDatePrevious7Days().toISOString());
-    return await this.doPostCalls(newQuery, CrawlInformation.SearchMostActiveRepos);
-  }
-
-  /**
-   * Send query request to get intial user data --> use initial user data to build 2nd query --> send 2nd query request to get complete user data.
-   */
-  async getMostActiveUsers() {
-
-    // Send first query request.
-    this.activeUsers = await this.doPostCalls(this.queryOrganizationMembersInformation, CrawlInformation.SearchMostActiveUserInformation);
-    var commitPromises: Array<Promise<ActiveUser>> = new Array<Promise<ActiveUser>>();
-
-    // Create new query for each user, send requests, stash retrieved promises.
-    for (let activeUser of this.activeUsers) {
-
-      // Create query for each user.
-      let newQuery = this.queryMostActiveUsersCommits
-        .replace('insertLogin', activeUser.getUserLogin())
-        .replace("insertDate", this.getDatePrevious7Days().toISOString())
-        .replace("insertID", activeUser.getUserID());
-
-      // Send each user request and stash response promises.
-      commitPromises.push(this.doPostCalls(newQuery, CrawlInformation.SearchMostActiveUsersCommits));
-    }
-
-    this.activeUsers = [];
-    // When a request has returned a response, store data.
-    await Promise.all(commitPromises).then(result => {
-      for (let activeUser of result) {
-        this.activeUsers.push(activeUser);
-      }
-    });
-
-    sortActiveUsers(this.activeUsers);
-    return this.activeUsers;
+  async crawlMemberPageData() {
+    return this.doPostCalls(this.queryMemberData, CrawlInformation.MemberPageData);
   }
 
   getDatePrevious7Days(): Date {
@@ -114,19 +61,4 @@ export class Organization extends postRequest {
     return date;
   }
 
-}
-
-function sortActiveUsers(activeUsers: Array<ActiveUser>) {
-  activeUsers.sort((a, b) => {
-    if (a.getCommitAmount() == b.getCommitAmount()) {
-      return 0;
-    } else {
-      if (a.getCommitAmount() > b.getCommitAmount()) {
-        return -1;
-      }
-      else if (a.getCommitAmount() < b.getCommitAmount()) {
-        return 1;
-      }
-    }
-  })
 }
