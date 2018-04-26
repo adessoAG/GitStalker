@@ -6,6 +6,8 @@ import { PullRequest } from './Objects/PullRequest';
 import { Organization } from './Objects/Organization';
 import { ChartJSData } from './Objects/ChartJSData';
 import { Commit } from './Objects/Commit';
+import { Member } from './Objects/Member';
+import { ResponseProcessingMember } from './ResponseProcessors/ResponseProcessingMember';
 
 /**
  * Communicates with GitHub GraphQL API and processes responses.
@@ -16,7 +18,7 @@ export abstract class postRequest {
      * Set authorization headers for http requests.
      */
     constructor() {
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + '84ad854f49c8451c816be9c508a0bba982f78f67  ';
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + '  ';
     }
 
     /**
@@ -66,15 +68,12 @@ export abstract class postRequest {
                     calculateExternalRepoActivity(organizationMembersPullRequests),
                     calculateInternalRepoActivity(baseData.repositories.nodes));
             case CrawlInformation.MemberPageData:
-            calculateOrganizationMemberActivity(response.error);
-            break;
+                const processMemberPageResponse: ResponseProcessingMember = new ResponseProcessingMember(response)
+                return processMemberPageResponse.processMembersResponse();
             default:
                 return response;
         }
     }
-}
-function calculateOrganizationMemberActivity(organizationMembers: Array<JSON>){
-    console.log(organizationMembers)
 }
 
 function filterExternalContributedRepos(organizationReposIDsJSON: Array<JSON>, organizationMembersPullRequestsJSON: Array<JSON>): Array<PullRequest> {
