@@ -8,6 +8,7 @@ import { ChartJSData } from './Objects/ChartJSData';
 import { Commit } from './Objects/Commit';
 import { Member } from './Objects/Member';
 import { ResponseProcessingMember } from './ResponseProcessors/ResponseProcessingMember';
+import { ResponseProcessingRepository } from './ResponseProcessors/ResponseProcessingRepository';
 
 /**
  * Communicates with GitHub GraphQL API and processes responses.
@@ -18,7 +19,7 @@ export abstract class postRequest {
      * Set authorization headers for http requests.
      */
     constructor() {
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + '  ';
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + '01f9b0e972368e9ead58d55b8ce6ed0826d194c5';
     }
 
     /**
@@ -68,8 +69,9 @@ export abstract class postRequest {
                     calculateExternalRepoActivity(organizationMembersPullRequests),
                     calculateInternalRepoActivity(baseData.repositories.nodes));
             case CrawlInformation.MemberPageData:
-                const processMemberPageResponse: ResponseProcessingMember = new ResponseProcessingMember(response)
-                return processMemberPageResponse.processMembersResponse();
+                return new ResponseProcessingMember(response).processResponse();
+            case CrawlInformation.RepositoryPageData:
+                return new ResponseProcessingRepository(response).processResponse();
             default:
                 return response;
         }

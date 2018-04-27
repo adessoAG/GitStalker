@@ -6,7 +6,7 @@ import { Organization } from './organization';
 export class Crawl {
 
     constructor() {
-        new Organization("adessoAG").crawlMemberPageData().then(function(value) {
+        new Organization("adessoAG").crawlRepositoryPageData().then(function(value) {
             console.log(value);
           });
     }

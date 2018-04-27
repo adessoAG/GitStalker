@@ -2,6 +2,9 @@ import { postRequest } from './postRequest';
 import { CrawlInformation } from './CrawlInformation';
 import { OrganizationValidation } from './Requests/OrganizationValidation';
 import { MainPageData } from './Requests/MainPageData';
+import { RepositoryData } from './Requests/RepositoryData';
+import { Member } from './Objects/Member';
+import { Repository } from './Objects/Repository';
 import { MemberData } from './Requests/MemberData';
 
 /**
@@ -12,6 +15,7 @@ export class Organization extends postRequest {
   readonly queryCheckIfOrganizationValid: string;
   readonly queryMainPageData: string;
   readonly queryMemberData: string;
+  readonly queryRepositoryData: string;
 
 
   /**
@@ -24,6 +28,7 @@ export class Organization extends postRequest {
     this.queryCheckIfOrganizationValid = new OrganizationValidation(organizationName).getQuery();
     this.queryMainPageData = new MainPageData(organizationName, this.getDatePrevious7Days()).getQuery();
     this.queryMemberData = new MemberData(organizationName, this.getDatePrevious7Days()).getQuery();
+    this.queryRepositoryData = new RepositoryData(organizationName, this.getDatePrevious7Days()).getQuery();
   }
 
   /**
@@ -47,15 +52,31 @@ export class Organization extends postRequest {
     });
   }
 
-  async crawlMainPageData() {
+  /**
+   * Crawls the necessary data for the dashboard of the selected organization
+   */
+  async crawlMainPageData(): Promise<Organization> {
     return this.doPostCalls(this.queryMainPageData, CrawlInformation.MainPageData);
   }
 
-  async crawlMemberPageData() {
+  /**
+   * Crawls the necessary data for the detailed overview of the members in the organization
+   */
+  async crawlMemberPageData(): Promise<Array<Member>> {
     return this.doPostCalls(this.queryMemberData, CrawlInformation.MemberPageData);
   }
 
-  getDatePrevious7Days(): Date {
+  /**
+   * Crawls the necessary data for the detailed overview of the repositories by the organization
+   */
+  async crawlRepositoryPageData(): Promise<Array<Repository>> {
+    return this.doPostCalls(this.queryRepositoryData, CrawlInformation.RepositoryPageData);
+  }
+
+  /**
+   * Returns the date one week ago. Also uses the current time!
+   */
+  private getDatePrevious7Days(): Date {  
     var date = new Date();
     date.setDate(date.getDate() - 7);
     return date;
