@@ -3,7 +3,7 @@ import { ChartJSData } from "./ChartJSData";
 export class Member {
 
     private name: string;
-    private login: string;
+    private username: string;
     private avatarURL: string;
     private githubURL: string;
     private previousCommits: ChartJSData;
@@ -11,7 +11,7 @@ export class Member {
     private previousPullRequests: ChartJSData;
 
     constructor(name: string,
-        login: string,
+        username: string,
         avatarURL: string,
         githubURL: string,
         previousCommits: ChartJSData,
@@ -19,7 +19,7 @@ export class Member {
         previousPullRequests: ChartJSData) {
 
         this.name = name;
-        this.login = login;
+        this.username = username;
         this.avatarURL = avatarURL;
         this.githubURL = githubURL;
         this.previousCommits = previousCommits;
@@ -31,8 +31,8 @@ export class Member {
         return this.name;
     }
 
-    getMemberLogin(): string {
-        return this.login;
+    getMemberUsername(): string {
+        return this.username;
     }
 
     getMemberAvatarURL(): string {

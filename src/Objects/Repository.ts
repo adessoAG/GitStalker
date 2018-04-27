@@ -4,30 +4,30 @@ export class Repository {
 
     private name: string;
     private description: string;
-    private primaryLanguage: string;
-    private licenseInfo: string;
-    private forkCount: number;
-    private starCount: number;
+    private programmingLanguage: string;
+    private license: string;
+    private forks: number;
+    private stars: number;
     private previousCommits: ChartJSData;
     private previousIssues: ChartJSData;
     private previousPullRequests: ChartJSData;
 
     constructor(name: string,
         description: string,
-        primaryLanguage: string,
-        licenseInfo: string,
-        forkCount: number,
-        starCount: number,
+        programmingLanguage: string,
+        license: string,
+        forks: number,
+        stars: number,
         previousCommits: ChartJSData,
         previousIssues: ChartJSData,
         previousPullRequests: ChartJSData) {
 
         this.name = name;
         this.description = description;
-        this.primaryLanguage = primaryLanguage;
-        this.licenseInfo = licenseInfo;
-        this.forkCount = forkCount;
-        this.starCount = starCount;
+        this.programmingLanguage = programmingLanguage;
+        this.license = license;
+        this.forks = forks;
+        this.stars = stars;
         this.previousCommits = previousCommits;
         this.previousIssues = previousIssues;
         this.previousPullRequests = previousPullRequests;
@@ -41,20 +41,20 @@ export class Repository {
         return this.description;
     }
 
-    getRepositoryPrimaryLanguage(): string {
-        return this.primaryLanguage;
+    getRepositoryProgrammingLanguage(): string {
+        return this.programmingLanguage;
     }
 
-    getRepositoryLicenseInfo(): string {
-        return this.licenseInfo;
+    getRepositoryLicense(): string {
+        return this.license;
     }
 
-    getRepositoryForkCount(): number {
-        return this.forkCount;
+    getRepositoryNumOfFork(): number {
+        return this.forks;
     }
 
-    getRepositoryStarCount(): number {
-        return this.starCount;
+    getRepositoryNumOfStars(): number {
+        return this.stars;
     }
 
     getRepositoryPreviousCommits(): ChartJSData {
