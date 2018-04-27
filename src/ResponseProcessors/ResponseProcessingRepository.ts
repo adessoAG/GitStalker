@@ -11,8 +11,10 @@ export class ResponseProcessingRepository {
 
     }
 
+    /**
+     * Processing the response of the query for the detailed repository information of the organization.
+     */
     processResponse(): Array<Repository> {
-        let number: number = 1;
         for (let repository of this.organizationRepositoriesJSON) {
             this.organizationRepositories.push(
                 new Repository(repository.name,
@@ -29,18 +31,30 @@ export class ResponseProcessingRepository {
         return this.organizationRepositories;
     }
 
+    /**
+     * Getter for the LicenseInfo of the repository
+     * @param repository JSON object of the detailed information of one repository 
+     */
     private getRepositoryLicenseInfo(repository: JSON): string {
         if (repository.licenseInfo == null) {
             return "undefined";
         } else return repository.licenseInfo.name;
     }
 
+    /**
+     * Getter for the PrimaryLanguage of the repository
+     * @param repository JSON object of the detailed information of one repository
+     */
     private getRepositoryPrimaryLanguage(repository: JSON): string {
         if (repository.primaryLanguage == null) {
             return "undefined";
         } else return repository.primaryLanguage.name;
     }
 
+    /**
+     * Generates the ChartJSData for the Commits overview of the organization
+     * @param repository JSON object of the detailed information of one repository
+     */
     private generateChartJSDataOfRepositoryCommits(repository: JSON): ChartJSData {
         let committedDates: Array<Date> = new Array<Date>();
         for (let commit of repository.defaultBranchRef.target.history.nodes) {
@@ -50,6 +64,10 @@ export class ResponseProcessingRepository {
         return this.generateChartJSData(committedDates);
     }
 
+    /**
+     * Generates the ChartJSData for the Issues overview of the organization
+     * @param repository JSON object of the detailed information of one repository
+     */
     private generateChartJSDataOfRepositoryIssues(repository: JSON): ChartJSData {
         let createdIssueDates: Array<Date> = new Array<Date>();
         for (let issue of repository.issues.nodes) {
@@ -62,6 +80,10 @@ export class ResponseProcessingRepository {
         return this.generateChartJSData(createdIssueDates);
     }
 
+    /**
+     * Generates the ChartJSData for the Pull Requests overview of the organization
+     * @param repository JSON object of the detailed information of one repository
+     */
     private generateChartJSDataOfRepositoryPullRequests(repository: JSON): ChartJSData {
         let createdPullRequestDates: Array<Date> = new Array<Date>();
         for (let pullRequest of repository.pullRequests.nodes) {
@@ -74,12 +96,20 @@ export class ResponseProcessingRepository {
         return this.generateChartJSData(createdPullRequestDates);
     }
 
+    /**
+     * Sorts an array by the date
+     * @param arrayToSort The array which should be sorted
+     */
     private sortArrayByDate(arrayToSort: Array<Date>) {
         arrayToSort.sort((a: Date, b: Date) => {
             return +a.getTime() - +b.getTime();
         });
     }
 
+    /**
+     * Generates the ChartJSData out of a array of dates.
+     * @param arrayofDates The dataset of dates to create ChartJSData
+     */
     private generateChartJSData(arrayofDates: Array<Date>) {
         let chartJSLabels: Array<string> = new Array<string>();
         let chartJSDataset: Array<number> = new Array<number>();
@@ -97,12 +127,19 @@ export class ResponseProcessingRepository {
         return new ChartJSData(chartJSLabels, chartJSDataset);
     }
 
+    /**
+     * Returns a date one week ago
+     */
     private getDatePrevious7Days(): Date {
         var date = new Date();
         date.setDate(date.getDate() - 7);
         return date;
     }
 
+    /**
+     * Formats the date to the layout "27/04/2018".
+     * @param date Date to format
+     */
     private getFormattedDate(date: Date): string {
         return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
     }
