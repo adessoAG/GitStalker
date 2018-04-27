@@ -7,7 +7,7 @@ import { ResponseProcessingMainPage } from './ResponseProcessors/ResponseProcess
 /**
  * Communicates with GitHub GraphQL API and processes responses.
  */
-export abstract class postRequest {
+export abstract class request {
 
     /**
      * Set authorization headers for http requests.

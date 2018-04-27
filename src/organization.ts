@@ -1,4 +1,4 @@
-import { postRequest } from './postRequest';
+import { request } from './Request';
 import { CrawlInformation } from './CrawlInformation';
 import { OrganizationValidation } from './Requests/OrganizationValidation';
 import { MainPageData } from './Requests/MainPageData';
@@ -8,9 +8,9 @@ import { Repository } from './Objects/Repository';
 import { MemberData } from './Requests/MemberData';
 
 /**
- * Defines request queries and sends requests to GitHub GraphQL API via parent class 'postRequest';
+ * Defines request queries and sends requests to GitHub GraphQL API via parent class 'Request';
  */
-export class Organization extends postRequest {
+export class Organization extends request {
 
   readonly queryCheckIfOrganizationValid: string;
   readonly queryMainPageData: string;
@@ -34,8 +34,8 @@ export class Organization extends postRequest {
   /**
    * 
    * @param query String that is sent to the GitHub API endpoint
-   * @param crawlInformation Enum that is used to specify response handling the the 'postRequest' class
-   * Uses parent class 'postRequest' to send requests with above mentioned parameters.
+   * @param crawlInformation Enum that is used to specify response handling the the 'Request' class
+   * Uses parent class 'Request' to send requests with above mentioned parameters.
    */
   private async doPostCalls(query: string, crawlInformation: CrawlInformation) {
     return await super.startPost(query, super.processResponse, crawlInformation);
