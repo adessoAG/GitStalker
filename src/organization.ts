@@ -76,7 +76,7 @@ export class Organization extends postRequest {
   /**
    * Returns the date one week ago. Also uses the current time!
    */
-  private getDatePrevious7Days(): Date {  
+  private getDatePrevious7Days(): Date {
     var date = new Date();
     date.setDate(date.getDate() - 7);
     return date;

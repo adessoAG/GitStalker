@@ -1,6 +1,11 @@
 export class MainPageData {
   mainPageQuery: string;
 
+  /**
+   * Used query to crawl the information for the starting dashboard of the organization.
+   * @param organizationName Selected organization to crawl information
+   * @param datePrevious7Days Calculated date one week ago
+   */
   constructor(organizationName: string, datePrevious7Days: Date) {
     this.mainPageQuery = `query {
             organization(login: "`+ organizationName + `") {
