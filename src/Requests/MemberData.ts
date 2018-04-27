@@ -1,8 +1,13 @@
 export class MemberData {
-    memberQuery: string;
+  memberQuery: string;
 
-    constructor(organizationName: string, datePrevious7Days: Date) {
-        this.memberQuery = `{
+  /**
+   * Used query to crawl the detailed information about the member of the organization.
+   * @param organizationName Selected organization to crawl information
+   * @param datePrevious7Days Calculated date one week ago
+   */
+  constructor(organizationName: string, datePrevious7Days: Date) {
+    this.memberQuery = `{
             organization(login: "`+ organizationName + `") {
               members(first: 100) {
                 nodes {
@@ -10,12 +15,12 @@ export class MemberData {
                   login
                   url
                   avatarUrl
-                  repositoriesContributedTo(last: 10, includeUserRepositories: true, contributionTypes: COMMIT) {
+                  repositoriesContributedTo(last: 25, includeUserRepositories: true, contributionTypes: COMMIT) {
                     nodes {
                       defaultBranchRef {
                         target {
                           ... on Commit {
-                            history(first: 10, since: "`+ datePrevious7Days.toISOString() + `") {
+                            history(first: 25, since: "`+ datePrevious7Days.toISOString() + `") {
                               nodes {
                                 committedDate
                               }
@@ -25,12 +30,12 @@ export class MemberData {
                       }
                     }
                   }
-                  issues(last: 10) {
+                  issues(last: 25) {
                     nodes {
                       createdAt
                     }
                   }
-                  pullRequests(last: 10) {
+                  pullRequests(last: 25) {
                     nodes {
                       createdAt
                     }
@@ -39,11 +44,13 @@ export class MemberData {
               }
             }
           }
-          
           `;
-    }
+  }
 
-    getQuery(): string {
-        return this.memberQuery;
-    }
+  /**
+   * Returns a string which represents the query.
+   */
+  getQuery(): string {
+    return this.memberQuery;
+  }
 }

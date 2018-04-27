@@ -8,10 +8,10 @@ export class Organization {
     private websiteURL: string;
     private githubURL: string;
     private description: string;
-    private membersAmount: number;
-    private teamsAmount: number;
-    private internalRepositoriesAmount: number;
-    private externalRepositoriesAmount: number;
+    private numOfMembers: number;
+    private numOfTeams: number;
+    private numOfInternalRepos: number;
+    private numOfExternalRepos: number;
     private externalRepositoriesChartJSData: ChartJSData;
     private internalRepositoriesChartJSData: ChartJSData;
 
@@ -21,10 +21,10 @@ export class Organization {
         websiteURL: string, 
         githubURL: string, 
         description: string, 
-        membersAmount: number, 
-        teamsAmount: number, 
-        internalRepositoriesAmount: number,
-        externalRepositoriesAmount: number,
+        numOfMembers: number, 
+        numOfTeams: number, 
+        numOfInternalRepos: number,
+        numOfExternalRepos: number,
         externalRepositoriesChartJSData: ChartJSData,
         internalRepositoriesChartJSData: ChartJSData) {
 
@@ -34,10 +34,10 @@ export class Organization {
         this.websiteURL = websiteURL;
         this.githubURL = githubURL;
         this.description = description;
-        this.membersAmount = membersAmount;
-        this.teamsAmount = teamsAmount;
-        this.internalRepositoriesAmount = internalRepositoriesAmount;
-        this.externalRepositoriesAmount = externalRepositoriesAmount;
+        this.numOfMembers = numOfMembers;
+        this.numOfTeams = numOfTeams;
+        this.numOfInternalRepos = numOfInternalRepos;
+        this.numOfExternalRepos = numOfExternalRepos;
         this.externalRepositoriesChartJSData = externalRepositoriesChartJSData;
         this.internalRepositoriesChartJSData = internalRepositoriesChartJSData;
     }
@@ -66,24 +66,24 @@ export class Organization {
         return this.description;
     }
 
-    getOrganizationMembersAmount(): number {
-        return this.membersAmount;
+    getOrganizationNumOfMembers(): number {
+        return this.numOfMembers;
     }
 
-    getOrganizationTeamsAmount(): number {
-        return this.teamsAmount;
+    getOrganizationNumOfTeams(): number {
+        return this.numOfTeams;
     }
 
-    getOrganizationInternalRepositoriesAmount(): number {
-        return this.internalRepositoriesAmount;
+    getOrganizationNumOfInternalRepositories(): number {
+        return this.numOfInternalRepos;
     }
 
     getOrganizationExternalRepoChartJSData(): ChartJSData {
         return this.externalRepositoriesChartJSData;
     }
 
-    getOrganizationExternalRepoAmount(): number {
-        return this.externalRepositoriesAmount;
+    getOrganizationNumOfExternalRepositories(): number {
+        return this.numOfExternalRepos;
     }
 
     getOrganizationInternalRepoChartJSData(): ChartJSData {

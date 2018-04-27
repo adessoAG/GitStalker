@@ -10,9 +10,17 @@ export class ResponseProcessingMember {
         this.organizationMembersJSON = organizationMembersJSON.organization.members.nodes;
     }
 
-    processMembersResponse(): Array<Member> {
+    processResponse(): Array<Member> {
         for (let member of this.organizationMembersJSON) {
-            this.organizationMembers.push(new Member(member.name, member.login, member.avatarUrl, member.url, this.generateChartJSDataOfMemberCommits(member), this.generateChartJSDataOfMemberIssues(member), this.generateChartJSDataOfMemberPullRequests(member)));
+            this.organizationMembers.push(
+                new Member(member.name,
+                    member.login,
+                    member.avatarUrl,
+                    member.url,
+                    this.generateChartJSDataOfMemberCommits(member),
+                    this.generateChartJSDataOfMemberIssues(member),
+                    this.generateChartJSDataOfMemberPullRequests(member))
+            );
         }
         return this.organizationMembers;
     }
