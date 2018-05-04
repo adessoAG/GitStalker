@@ -2,10 +2,10 @@ import { Team } from "../Objects/Team";
 
 export class ResponseProcessingTeams {
 
-    private organizationTeamsJSON: Array<JSON>;
+    private organizationTeamsJSON: Array<any>;
     private organizationTeams: Array<Team> = new Array<Team>();
 
-    constructor(organizationTeamsJSON: Array<JSON>) {
+    constructor(organizationTeamsJSON: any) {
         this.organizationTeamsJSON = organizationTeamsJSON.organization.teams.nodes;
 
     }
@@ -28,7 +28,7 @@ export class ResponseProcessingTeams {
         return this.organizationTeams;
     }
 
-    calculateTotalCountOfPreviousCommits(contributedReposByTeam: Array<JSON>): number {
+    calculateTotalCountOfPreviousCommits(contributedReposByTeam: Array<any>): number {
         let totalCountOfPreviousCommits: number = 0;
         for (let contributedRepo of contributedReposByTeam) {
             totalCountOfPreviousCommits += contributedRepo.defaultBranchRef.target.history.totalCount;
