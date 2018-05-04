@@ -3,10 +3,10 @@ import { ChartJSData } from "../Objects/ChartJSData";
 
 export class ResponseProcessingRepository {
 
-    private organizationRepositoriesJSON: Array<JSON>;
+    private organizationRepositoriesJSON: Array<any>;
     private organizationRepositories: Array<Repository> = new Array<Repository>();
 
-    constructor(organizationRepositoriesJSON: Array<JSON>) {
+    constructor(organizationRepositoriesJSON: any) {
         this.organizationRepositoriesJSON = organizationRepositoriesJSON.organization.repositories.nodes;
 
     }
@@ -35,7 +35,7 @@ export class ResponseProcessingRepository {
      * Getter for the LicenseInfo of the repository
      * @param repository JSON object of the detailed information of one repository 
      */
-    private getRepositoryLicenseInfo(repository: JSON): string {
+    private getRepositoryLicenseInfo(repository: any): string {
         if (repository.licenseInfo == null) {
             return "undefined";
         } else return repository.licenseInfo.name;
@@ -45,7 +45,7 @@ export class ResponseProcessingRepository {
      * Getter for the PrimaryLanguage of the repository
      * @param repository JSON object of the detailed information of one repository
      */
-    private getRepositoryPrimaryLanguage(repository: JSON): string {
+    private getRepositoryPrimaryLanguage(repository: any): string {
         if (repository.primaryLanguage == null) {
             return "undefined";
         } else return repository.primaryLanguage.name;
@@ -55,7 +55,7 @@ export class ResponseProcessingRepository {
      * Generates the ChartJSData for the Commits overview of the organization
      * @param repository JSON object of the detailed information of one repository
      */
-    private generateChartJSDataOfRepositoryCommits(repository: JSON): ChartJSData {
+    private generateChartJSDataOfRepositoryCommits(repository: any): ChartJSData {
         let committedDates: Array<Date> = new Array<Date>();
         for (let commit of repository.defaultBranchRef.target.history.nodes) {
             committedDates.push(new Date(commit.committedDate));
@@ -68,7 +68,7 @@ export class ResponseProcessingRepository {
      * Generates the ChartJSData for the Issues overview of the organization
      * @param repository JSON object of the detailed information of one repository
      */
-    private generateChartJSDataOfRepositoryIssues(repository: JSON): ChartJSData {
+    private generateChartJSDataOfRepositoryIssues(repository: any): ChartJSData {
         let createdIssueDates: Array<Date> = new Array<Date>();
         for (let issue of repository.issues.nodes) {
             let createdIssueAt: Date = new Date(issue.createdAt);
@@ -84,7 +84,7 @@ export class ResponseProcessingRepository {
      * Generates the ChartJSData for the Pull Requests overview of the organization
      * @param repository JSON object of the detailed information of one repository
      */
-    private generateChartJSDataOfRepositoryPullRequests(repository: JSON): ChartJSData {
+    private generateChartJSDataOfRepositoryPullRequests(repository: any): ChartJSData {
         let createdPullRequestDates: Array<Date> = new Array<Date>();
         for (let pullRequest of repository.pullRequests.nodes) {
             let createdPullRequestAt: Date = new Date(pullRequest.createdAt);

@@ -4,9 +4,9 @@ import { ChartJSData } from "../Objects/ChartJSData";
 export class ResponseProcessingMember {
 
     private organizationMembers: Array<Member> = new Array<Member>();
-    private organizationMembersJSON: Array<JSON>;
+    private organizationMembersJSON: Array<any>;
 
-    constructor(organizationMembersJSON: Array<JSON>) {
+    constructor(organizationMembersJSON: any) {
         this.organizationMembersJSON = organizationMembersJSON.organization.members.nodes;
     }
 
@@ -32,7 +32,7 @@ export class ResponseProcessingMember {
      * Generates the ChartJSData for the Commits overview of the organization 
      * @param member JSON object of the detailed information of one member 
      */
-    private generateChartJSDataOfMemberCommits(member: JSON): ChartJSData {
+    private generateChartJSDataOfMemberCommits(member: any): ChartJSData {
         let committedDates: Array<Date> = new Array<Date>();
         for (let contributedRepos of member.repositoriesContributedTo.nodes) {
             for (let commit of contributedRepos.defaultBranchRef.target.history.nodes) {
@@ -47,7 +47,7 @@ export class ResponseProcessingMember {
      * Generates the ChartJSData for the Issues overview of the organization 
      * @param member JSON object of the detailed information of one member 
      */
-    private generateChartJSDataOfMemberIssues(member: JSON): ChartJSData {
+    private generateChartJSDataOfMemberIssues(member: any): ChartJSData {
         let createdIssueDates: Array<Date> = new Array<Date>();
         for (let issue of member.issues.nodes) {
             let createdIssueAt: Date = new Date(issue.createdAt);
@@ -63,7 +63,7 @@ export class ResponseProcessingMember {
      * Generates the ChartJSData for the Pull Requests overview of the organization
      * @param member JSON object of the detailed information of one member 
      */
-    private generateChartJSDataOfMemberPullRequests(member: JSON): ChartJSData {
+    private generateChartJSDataOfMemberPullRequests(member: any): ChartJSData {
         let createdPullRequestDates: Array<Date> = new Array<Date>();
         for (let pullRequest of member.pullRequests.nodes) {
             let createdPullRequestAt: Date = new Date(pullRequest.createdAt);

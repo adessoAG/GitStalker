@@ -5,10 +5,10 @@ import { Commit } from "../Objects/Commit";
 
 export class ResponseProcessingMainPage {
 
-    private organizationJSON: Array<JSON>;
+    private organizationJSON: any;
 
-    constructor(organizationJSON: Array<JSON>) {
-        this.organizationJSON = organizationJSON.organization;
+    constructor(organizationJSON: any) {
+        this.organizationJSON = (organizationJSON as any).organization;
     }
 
     processResponse(): Organization {
@@ -27,7 +27,7 @@ export class ResponseProcessingMainPage {
             this.calculateInternalRepoActivity(this.organizationJSON.repositories.nodes));
     }
 
-    private filterExternalContributedRepos(organizationReposIDsJSON: Array<JSON>, organizationMembersPullRequestsJSON: Array<JSON>): Array<PullRequest> {
+    private filterExternalContributedRepos(organizationReposIDsJSON: Array<JSON>, organizationMembersPullRequestsJSON: Array<any>): Array<PullRequest> {
         const organizationReposIDs: Array<string> = this.getOrganizationsReposIDs(organizationReposIDsJSON);
         const organizationMembersPullRequests: Array<PullRequest> = new Array<PullRequest>();
 
@@ -41,7 +41,7 @@ export class ResponseProcessingMainPage {
         return organizationMembersPullRequests;
     }
 
-    private getOrganizationsReposIDs(organizationReposIDsJSON: Array<JSON>): Array<string> {
+    private getOrganizationsReposIDs(organizationReposIDsJSON: Array<any>): Array<string> {
         const organizationReposIDs: Array<string> = new Array<string>();
 
         for (let organizationRepoIDs of organizationReposIDsJSON) {
@@ -86,7 +86,7 @@ export class ResponseProcessingMainPage {
         return new ChartJSData(chartJSLabels, chartJSDataset);
     }
 
-    private calculateInternalRepoActivity(internalRepoCommitActivitys: Array<JSON>) {
+    private calculateInternalRepoActivity(internalRepoCommitActivitys: Array<any>) {
         const internalRepoActivitys: Array<Commit> = new Array<Commit>();
         const internalRepoActivityDays: Array<string> = new Array<string>();
         const internalRepoActivityAmount: Array<number> = new Array<number>();
