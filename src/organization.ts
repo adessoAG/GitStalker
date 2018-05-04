@@ -6,6 +6,8 @@ import { RepositoryData } from './Requests/RepositoryData';
 import { Member } from './Objects/Member';
 import { Repository } from './Objects/Repository';
 import { MemberData } from './Requests/MemberData';
+import { TeamData } from './Requests/TeamData';
+import { Team } from './Objects/Team';
 
 /**
  * Defines request queries and sends requests to GitHub GraphQL API via parent class 'Request';
@@ -16,6 +18,7 @@ export class Organization extends request {
   readonly queryMainPageData: string;
   readonly queryMemberData: string;
   readonly queryRepositoryData: string;
+  readonly queryTeamData: string;
 
 
   /**
@@ -29,6 +32,7 @@ export class Organization extends request {
     this.queryMainPageData = new MainPageData(organizationName, this.getDatePrevious7Days()).getQuery();
     this.queryMemberData = new MemberData(organizationName, this.getDatePrevious7Days()).getQuery();
     this.queryRepositoryData = new RepositoryData(organizationName, this.getDatePrevious7Days()).getQuery();
+    this.queryTeamData = new TeamData(organizationName, this.getDatePrevious7Days()).getQuery();
   }
 
   /**
@@ -71,6 +75,13 @@ export class Organization extends request {
    */
   async crawlRepositoryPageData(): Promise<Array<Repository>> {
     return this.doPostCalls(this.queryRepositoryData, CrawlInformation.RepositoryPageData);
+  }
+
+  /**
+   * Crawls the necessary data for the overview of the teams in the organization
+   */
+  async crawlTeamPageData(): Promise<Array<Team>> {
+    return this.doPostCalls(this.queryTeamData, CrawlInformation.TeamPageData);
   }
 
   /**

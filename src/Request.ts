@@ -3,6 +3,7 @@ import { CrawlInformation } from './CrawlInformation';
 import { ResponseProcessingMember } from './ResponseProcessors/ResponseProcessingMember';
 import { ResponseProcessingRepository } from './ResponseProcessors/ResponseProcessingRepository';
 import { ResponseProcessingMainPage } from './ResponseProcessors/ResponseProcessingMainPage';
+import { ResponseProcessingTeams } from './ResponseProcessors/ResponseProcessingTeams';
 
 /**
  * Communicates with GitHub GraphQL API and processes responses.
@@ -13,7 +14,7 @@ export abstract class request {
      * Set authorization headers for http requests.
      */
     constructor() {
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + '2eb20f3a02e375c760d52ba5a0fb1596ce7a27c0 ';
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + 'dba9bad08c933b8fdcba882cb062d025bf9a6b3a';
     }
 
     /**
@@ -54,6 +55,8 @@ export abstract class request {
                 return new ResponseProcessingMember(response).processResponse();
             case CrawlInformation.RepositoryPageData:
                 return new ResponseProcessingRepository(response).processResponse();
+            case CrawlInformation.TeamPageData:
+                return new ResponseProcessingTeams(response).processResponse();
             default:
                 return response;
         }
