@@ -5,7 +5,12 @@ import { Organization } from './organization';
  */
 export class Crawl {
 
-    constructor() {}
+    constructor() {
+        this.createOrganization("adessoAG").crawlTeamPageData().then(res => {
+            console.log(res)
+        }
+        )
+    }
 
     /**
      * Startpoint for the Crawler. After creating the organization information can be crawled!
@@ -16,3 +21,5 @@ export class Crawl {
     }
 
 }
+
+new Crawl();
