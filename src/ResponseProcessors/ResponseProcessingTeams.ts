@@ -32,7 +32,7 @@ export class ResponseProcessingTeams {
      * Calculates the total Count of the commits in all contributed repos by the team
      * @param contributedReposByTeam Array of contributed Repos by the team
      */
-    calculateTotalCountOfPreviousCommits(contributedReposByTeam: Array<JSON>): number {
+    calculateTotalCountOfPreviousCommits(contributedReposByTeam: Array<any>): number {
         let totalCountOfPreviousCommits: number = 0;
         for (let contributedRepo of contributedReposByTeam) {
             totalCountOfPreviousCommits += contributedRepo.defaultBranchRef.target.history.totalCount;
