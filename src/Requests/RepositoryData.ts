@@ -1,5 +1,11 @@
-export class RepositoryData {
-  repositoryQuery: string;
+import { Request } from "./Request";
+import { ResponseProcessingRepository } from "../ResponseProcessors/ResponseProcessingRepository";
+import { Repository } from "../Objects/Repository";
+import { Query } from "../Objects/Query";
+import { RequestStatus } from "./RequestStatus";
+
+export class RepositoryData extends Request {
+  readonly repositoryQuery: string;
 
   /**
    * Used query to crawl the detailed information about the repositories of the organization.
@@ -7,6 +13,7 @@ export class RepositoryData {
    * @param datePrevious7Days Calculated date one week ago
    */
   constructor(organizationName: string, datePrevious7Days: Date) {
+    super();
     this.repositoryQuery = `{
             organization(login: "`+ organizationName + `") {
               repositories(first: 100) {
@@ -56,5 +63,9 @@ export class RepositoryData {
   */
   getQuery(): string {
     return this.repositoryQuery;
+  }
+
+  async crawlData(): Promise<Array<Repository>> {
+    return new ResponseProcessingRepository((await this.startPost(new Query(RequestStatus.CREATED,this.repositoryQuery))).getQueryResponse()).processResponse();
   }
 }

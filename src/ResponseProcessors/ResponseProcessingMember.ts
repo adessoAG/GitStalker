@@ -7,7 +7,7 @@ export class ResponseProcessingMember {
     private organizationMembersJSON: Array<any>;
 
     constructor(organizationMembersJSON: any) {
-        this.organizationMembersJSON = organizationMembersJSON.organization.members.nodes;
+        this.organizationMembersJSON = organizationMembersJSON.nodes;
     }
 
     /**

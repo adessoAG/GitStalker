@@ -1,4 +1,4 @@
-import { Organization } from './organization';
+import { BaseOrganization } from './BaseOrganization';
 
 /**
  * Entry point for using the GitStalker library.
@@ -6,8 +6,8 @@ import { Organization } from './organization';
 export class Crawl {
 
     constructor() {
-        this.createOrganization("adessoAG").crawlTeamPageData().then(res => {
-            console.log(res)
+        this.createOrganization("adessoag").crawlMemberPageData().then(res => {
+         console.log(res);
         }
         )
     }
@@ -16,8 +16,8 @@ export class Crawl {
      * Startpoint for the Crawler. After creating the organization information can be crawled!
      * @param organizationName Selected organization to crawl information
      */
-    public createOrganization(organizationName:string):Organization{
-        return new Organization(organizationName);
+    public createOrganization(organizationName:string):BaseOrganization{
+        return new BaseOrganization(organizationName);
     }
 
 }

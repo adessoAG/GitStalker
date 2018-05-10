@@ -1,5 +1,11 @@
-export class MainPageData {
-  mainPageQuery: string;
+import { Request } from "./Request";
+import { ResponseProcessingMainPage } from "../ResponseProcessors/ResponseProcessingMainPage";
+import { Organization } from "../Objects/Organization";
+import { Query } from "../Objects/Query";
+import { RequestStatus } from "./RequestStatus";
+
+export class MainPageData extends Request{
+  readonly mainPageQuery: string;
 
   /**
    * Used query to crawl the information for the starting dashboard of the organization.
@@ -7,6 +13,7 @@ export class MainPageData {
    * @param datePrevious7Days Calculated date one week ago
    */
   constructor(organizationName: string, datePrevious7Days: Date) {
+    super();
     this.mainPageQuery = `query {
             organization(login: "`+ organizationName + `") {
               name
@@ -65,5 +72,9 @@ export class MainPageData {
 
   getQuery(): string {
     return this.mainPageQuery;
+  }
+
+  async crawlData(): Promise<Organization> {
+    return new ResponseProcessingMainPage((await this.startPost(new Query(RequestStatus.CREATED, this.mainPageQuery))).getQueryResponse()).processResponse();
   }
 }

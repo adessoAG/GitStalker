@@ -1,13 +1,20 @@
-export class TeamData {
-    teamQuery: string;
-  
-    /**
-     * Used query to crawl the detailed information about the teams of the organization.
-     * @param organizationName Selected organization to crawl information
-     * @param datePrevious7Days Calculated date one week ago
-     */
-    constructor(organizationName: string, datePrevious7Days: Date) {
-      this.teamQuery = `{
+import { Request } from "./Request";
+import { ResponseProcessingTeams } from "../ResponseProcessors/ResponseProcessingTeams";
+import { Team } from "../Objects/Team";
+import { Query } from "../Objects/Query";
+import { RequestStatus } from "./RequestStatus";
+
+export class TeamData extends Request {
+  readonly teamQuery: string;
+
+  /**
+   * Used query to crawl the detailed information about the teams of the organization.
+   * @param organizationName Selected organization to crawl information
+   * @param datePrevious7Days Calculated date one week ago
+   */
+  constructor(organizationName: string, datePrevious7Days: Date) {
+    super();
+    this.teamQuery = `{
         organization(login: "`+ organizationName + `") {
           teams(first: 50) {
             totalCount
@@ -37,13 +44,16 @@ export class TeamData {
           }
         }
       }`;
-    }
-  
-    /**
-     * Returns a string which represents the query.
-     */
-    getQuery(): string {
-      return this.teamQuery;
-    }
   }
-  
+
+  /**
+   * Returns a string which represents the query.
+   */
+  getQuery(): string {
+    return this.teamQuery;
+  }
+
+  async crawlData(): Promise<Array<Team>> {
+    return new ResponseProcessingTeams((await this.startPost(new Query(RequestStatus.CREATED,this.teamQuery))).getQueryResponse()).processResponse();
+  }
+}
