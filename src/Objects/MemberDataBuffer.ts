@@ -11,15 +11,15 @@ export class MemberDataBuffer {
         this.memberIDs = memberIDs;
     }
 
-    getHasNextPage(){
+    getHasNextPage() {
         return this.hasNextPage;
     }
 
-    getEndCursor(){
+    getEndCursor() {
         return this.endCursor;
     }
 
-    getMemberIDs(){
+    getMemberIDs() {
         return this.memberIDs;
     }
 }

@@ -54,6 +54,6 @@ export class TeamData extends Request {
   }
 
   async crawlData(): Promise<Array<Team>> {
-    return new ResponseProcessingTeams((await this.startPost(new Query(RequestStatus.CREATED,this.teamQuery))).getQueryResponse()).processResponse();
+    return new ResponseProcessingTeams((await this.startPost(new Query(RequestStatus.CREATED, this.teamQuery))).getQueryResponse()).processResponse();
   }
 }

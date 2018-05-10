@@ -8,7 +8,7 @@ export class Commit {
     constructor(committedAt: Date,
         changedFiles: number,
         committerName: string,
-        repositoryName: string ) {
+        repositoryName: string) {
 
         this.committedAt = committedAt;
         this.changedFiles = changedFiles;

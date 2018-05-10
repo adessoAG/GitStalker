@@ -11,11 +11,11 @@ export class ResponseProcessingMemberIDs {
     }
 
     processResponse() {
-        return new MemberDataBuffer(this.organizationMembersIDsJSON.pageInfo.hasNextPage,this.organizationMembersIDsJSON.pageInfo.endCursor,this.generateMemberIDs(this.organizationMembersIDsJSON.nodes))
+        return new MemberDataBuffer(this.organizationMembersIDsJSON.pageInfo.hasNextPage, this.organizationMembersIDsJSON.pageInfo.endCursor, this.generateMemberIDs(this.organizationMembersIDsJSON.nodes))
     }
 
     generateMemberIDs(memberIDs: any) {
-        for(let memberID of memberIDs){
+        for (let memberID of memberIDs) {
             this.organizationMembersIDs.push("\"" + memberID.id + "\"")
         }
         return this.organizationMembersIDs;

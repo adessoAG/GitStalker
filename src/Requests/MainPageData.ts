@@ -4,7 +4,7 @@ import { Organization } from "../Objects/Organization";
 import { Query } from "../Objects/Query";
 import { RequestStatus } from "./RequestStatus";
 
-export class MainPageData extends Request{
+export class MainPageData extends Request {
   readonly mainPageQuery: string;
 
   /**

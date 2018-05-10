@@ -8,7 +8,7 @@ import { RequestStatus } from './RequestStatus';
 export abstract class Request {
 
     static previousQuerys: Array<Query> = new Array<Query>();
-    
+
     /**
      * Set authorization headers for http requests.
      */
@@ -49,34 +49,10 @@ export abstract class Request {
         queryToReset.setQueryStatus(RequestStatus.CREATED);
     }
 
-    async tryPreviousRequestAgain(){
-        const lastQuery: Query|undefined = Request.previousQuerys.pop();
-        if( lastQuery != undefined){
+    async tryPreviousRequestAgain() {
+        const lastQuery: Query | undefined = Request.previousQuerys.pop();
+        if (lastQuery != undefined) {
             return await this.startPost(lastQuery);
         }
     }
-
-    // /**
-    //  * 
-    //  * @param response Data that is returned from API request
-    //  * @param crawlInformation 'Metadata' used for response processing handling
-    //  * Processes responses returned from GitHub API requests. Returns processed data.
-    //  * Chooses suitable processor to work through the nested JSON.
-    //  */
-    // processResponse(response: any, crawlInformation: CrawlInformation) {
-    //     switch (crawlInformation) {
-    //         case CrawlInformation.SearchIfOrganizationValid:
-    //             return response.organization;
-    //         case CrawlInformation.MainPageData:
-    //             return new ResponseProcessingMainPage(response).processResponse();
-    //         case CrawlInformation.MemberPageData:
-    //             return new ResponseProcessingMember(response).processResponse();
-    //         case CrawlInformation.RepositoryPageData:
-    //             return new ResponseProcessingRepository(response).processResponse();
-    //         case CrawlInformation.TeamPageData:
-    //             return new ResponseProcessingTeams(response).processResponse();
-    //         default:
-    //             return response;
-    //     }
-    // }
 }

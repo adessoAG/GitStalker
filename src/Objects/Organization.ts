@@ -15,14 +15,14 @@ export class Organization {
     private externalRepositoriesChartJSData: ChartJSData;
     private internalRepositoriesChartJSData: ChartJSData;
 
-    constructor(name: string, 
-        id: string, 
-        location: string, 
-        websiteURL: string, 
-        githubURL: string, 
-        description: string, 
-        numOfMembers: number, 
-        numOfTeams: number, 
+    constructor(name: string,
+        id: string,
+        location: string,
+        websiteURL: string,
+        githubURL: string,
+        description: string,
+        numOfMembers: number,
+        numOfTeams: number,
         numOfInternalRepos: number,
         numOfExternalRepos: number,
         externalRepositoriesChartJSData: ChartJSData,

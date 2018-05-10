@@ -3,7 +3,6 @@ import { Member } from "../Objects/Member";
 import { ResponseProcessingMember } from "../ResponseProcessors/ResponseProcessingMember";
 import { Query } from "../Objects/Query";
 import { RequestStatus } from "./RequestStatus";
-import { SSL_OP_EPHEMERAL_RSA } from "constants";
 import { ResponseProcessingErrorCheck } from "../ResponseProcessors/ResponseProcessingErrorCheck";
 
 export class MemberData extends Request {

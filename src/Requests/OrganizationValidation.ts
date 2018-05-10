@@ -2,7 +2,7 @@ import { Request } from "./Request";
 import { Query } from "../Objects/Query";
 import { RequestStatus } from "./RequestStatus";
 
-export class OrganizationValidation extends Request{
+export class OrganizationValidation extends Request {
     readonly organizationValidation: string;
 
     /**
@@ -28,6 +28,6 @@ export class OrganizationValidation extends Request{
     async crawlData(): Promise<boolean> {
         if ((await this.startPost(new Query(RequestStatus.CREATED, this.organizationValidation))).getQueryResponse()) {
             return true;
-          } else return false;
-      }
+        } else return false;
+    }
 }

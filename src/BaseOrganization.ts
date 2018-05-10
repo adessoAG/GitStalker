@@ -44,13 +44,13 @@ export class BaseOrganization {
   }
 
   async crawlMemberPageData() {
-   return new MemberData(await new MemberID(this.organizationName).crawlData(),this.getDatePrevious7Days()).crawlData();
+    return new MemberData(await new MemberID(this.organizationName).crawlData(), this.getDatePrevious7Days()).crawlData();
   }
   /**
    * Crawls the necessary data for the dashboard of the selected organization
    */
   async crawlMainPageData(): Promise<Organization> {
-    return new MainPageData(this.organizationName,this.getDatePrevious7Days()).crawlData();
+    return new MainPageData(this.organizationName, this.getDatePrevious7Days()).crawlData();
   }
 
   // /**
@@ -64,14 +64,14 @@ export class BaseOrganization {
    * Crawls the necessary data for the detailed overview of the repositories by the organization
    */
   async crawlRepositoryPageData(): Promise<Array<Repository>> {
-    return new RepositoryData(this.organizationName,this.getDatePrevious7Days()).crawlData();
+    return new RepositoryData(this.organizationName, this.getDatePrevious7Days()).crawlData();
   }
 
   /**
    * Crawls the necessary data for the overview of the teams in the organization
    */
   async crawlTeamPageData(): Promise<Array<Team>> {
-    return new TeamData(this.organizationName,this.getDatePrevious7Days()).crawlData();
+    return new TeamData(this.organizationName, this.getDatePrevious7Days()).crawlData();
   }
 
   /**
